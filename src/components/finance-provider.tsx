@@ -522,6 +522,7 @@ export function getMonthlySavingsStats(
 ) {
   const { month, year } = monthKey();
   const walletAmount = wallets.reduce((sum, wallet) => sum + Number(wallet.balance), 0);
+  const currentMonthClosed = savings.some((item) => item.month === month && item.year === year && item.closed_at);
   const currentSavings = savings.find((item) => item.month === month && item.year === year && !item.closed_at);
   const monthlySavings = Number(currentSavings?.monthly_savings ?? 0);
   const monthBudgets = uniqueBudgetsForMonth(budgets, month, year);
@@ -543,7 +544,7 @@ export function getMonthlySavingsStats(
       if (bIndex === -1) return -1;
       return aIndex - bIndex;
     });
-  const unusedBudget = breakdown.reduce((sum, item) => sum + item.amount, 0);
+  const unusedBudget = currentMonthClosed ? 0 : breakdown.reduce((sum, item) => sum + item.amount, 0);
   const monthlyExpenses = transactions
     .filter((item) => sameMonth(item.date, month, year))
     .reduce((sum, item) => sum + Number(item.amount), 0);
