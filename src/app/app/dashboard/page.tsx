@@ -46,16 +46,6 @@ export default function DashboardPage() {
         </Card>
       </section>
 
-      <Card>
-        <h2 className="mb-3 text-lg font-bold">How the Numbers Work</h2>
-        <div className="grid gap-3 md:grid-cols-3">
-          <FormulaStep label="Available Balance" value={`${money(stats.walletAmount, activeCurrency)} - ${money(stats.monthlySavings, activeCurrency)} - ${money(stats.monthlyExpenses, activeCurrency)} = ${money(stats.walletBalance, activeCurrency)}`} />
-          <FormulaStep label="Saved This Month" value={`${money(stats.monthlySavings, activeCurrency)} + ${money(stats.leftoverWallet, activeCurrency)} = ${money(stats.totalSavedThisMonth, activeCurrency)}`} />
-          <FormulaStep label="Budget Left" value="Budget limits explain where money was not spent. They do not create extra money." />
-          <FormulaStep label="At Month Close" value="Real leftover wallet money moves into savings history." />
-        </div>
-      </Card>
-
       <section>
         <Card>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -162,15 +152,6 @@ function MiniMetric({ label, value, tone = "default" }: { label: string; value: 
     <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
       <p className="text-sm text-ink/55 dark:text-white/55">{label}</p>
       <p className={tone === "green" ? "mt-1 text-xl font-black text-mint" : tone === "red" ? "mt-1 text-xl font-black text-coral" : "mt-1 text-xl font-black"}>{value}</p>
-    </div>
-  );
-}
-
-function FormulaStep({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-md bg-ink/[0.03] p-4 dark:bg-white/[0.06]">
-      <p className="text-sm font-bold">{label}</p>
-      <p className="mt-2 text-sm text-ink/60 dark:text-white/60">{value}</p>
     </div>
   );
 }
