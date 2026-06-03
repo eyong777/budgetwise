@@ -56,7 +56,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="grid gap-3 p-4 sm:grid-cols-3">
-            <MiniMetric label="Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} tone="green" />
+            <MiniMetric label="Mandatory Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} tone="green" />
             <MiniMetric label="Monthly Budget" value={money(monthlyBudget, activeCurrency)} />
             <MiniMetric label="Expenses This Month" value={money(stats.monthlyExpenses, activeCurrency)} tone="red" />
           </div>
@@ -74,8 +74,8 @@ export default function DashboardPage() {
 
           <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <BudgetStat label="Monthly Budget" value={money(monthlyBudget, activeCurrency)} />
-            <BudgetStat label="Spent" value={money(totalBudgetSpent, activeCurrency)} tone="red" />
-            <BudgetStat label="Still Available" value={money(stats.unusedBudget, activeCurrency)} tone="green" />
+            <BudgetStat label="Budget Spent" value={money(totalBudgetSpent, activeCurrency)} tone="red" />
+            <BudgetStat label="Budget Remaining" value={money(stats.unusedBudget, activeCurrency)} tone="green" />
             <BudgetStat label="Over Budget" value={String(overBudgetCount)} tone={overBudgetCount > 0 ? "red" : "green"} />
           </div>
 
@@ -119,12 +119,7 @@ export default function DashboardPage() {
         </Card>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <Card>
-          <h2 className="mb-4 text-lg font-bold">Savings Breakdown</h2>
-          <SavingsBreakdown stats={stats} monthlyBudget={monthlyBudget} currency={activeCurrency} />
-        </Card>
-
+      <section>
         <Card>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-bold">Recent Expenses</h2>
@@ -148,31 +143,6 @@ export default function DashboardPage() {
           </div>
         </Card>
       </section>
-    </div>
-  );
-}
-
-function SavingsBreakdown({ stats, monthlyBudget, currency }: { stats: ReturnType<typeof useMonthlyStats>; monthlyBudget: number; currency: Currency }) {
-  return (
-    <div className="grid gap-4">
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
-          <p className="text-sm text-ink/60 dark:text-white/60">Monthly Savings</p>
-          <p className="mt-1 text-xl font-black text-mint">{money(stats.monthlySavings, currency)}</p>
-        </div>
-        <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
-          <p className="text-sm text-ink/60 dark:text-white/60">Monthly Budget</p>
-          <p className="mt-1 text-xl font-black">{money(monthlyBudget, currency)}</p>
-        </div>
-        <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
-          <p className="text-sm text-ink/60 dark:text-white/60">Available Balance</p>
-          <p className="mt-1 text-xl font-black">{money(stats.leftoverWallet, currency)}</p>
-        </div>
-      </div>
-      <div className="rounded-md bg-mint/10 p-4">
-        <p className="text-sm text-ink/60 dark:text-white/60">Final Total Saved This Month</p>
-        <p className="mt-1 text-2xl font-black text-mint">{money(stats.totalSavedThisMonth, currency)}</p>
-      </div>
     </div>
   );
 }
