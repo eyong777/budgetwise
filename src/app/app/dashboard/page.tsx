@@ -31,11 +31,8 @@ export default function DashboardPage() {
           <div className="bg-ink p-6 text-white dark:bg-white dark:text-ink">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm opacity-70">Money Left to Spend</p>
+                <p className="text-sm opacity-70">Available Balance</p>
                 <h2 className="mt-3 text-4xl font-black tracking-normal sm:text-5xl">{money(stats.walletBalance, activeCurrency)}</h2>
-                <p className="mt-3 max-w-xl text-sm opacity-75">
-                  Wallet money minus monthly savings and this month's expenses.
-                </p>
               </div>
               <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-white/10 dark:bg-ink/10">
                 <Wallet />
@@ -144,7 +141,7 @@ function SavingsBreakdown({ stats, currency }: { stats: ReturnType<typeof useMon
           <p className="mt-1 text-xl font-black text-mint">{money(stats.monthlySavings, currency)}</p>
         </div>
         <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
-          <p className="text-sm text-ink/60 dark:text-white/60">Budget Left</p>
+          <p className="text-sm text-ink/60 dark:text-white/60">Monthly Budget</p>
           <p className="mt-1 text-xl font-black">{money(stats.unusedBudget, currency)}</p>
         </div>
         <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
