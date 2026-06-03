@@ -28,12 +28,12 @@ export default function DashboardPage() {
     return spent > Number(budget.limit_amount);
   });
   const insights = [
-    stats.readyToAssign < 0
-      ? "You assigned more money than you currently have. Move money out of a category."
-      : "Ready to Assign is money in wallets that does not have a job yet.",
+    stats.walletBalance <= 0
+      ? "Money left to spend is zero because savings and expenses used the wallet money."
+      : "Money left to spend is wallet money minus monthly savings and expenses.",
     stats.unusedBudget > 0
-      ? `${money(stats.categoryAvailable, activeCurrency)} is still available inside categories.`
-      : "Category balances appear after you assign money.",
+      ? `${money(stats.unusedBudget, activeCurrency)} is budget left. It is a limit breakdown, not extra money.`
+      : "Budget left will appear here as spending stays below budget limits.",
     stats.leftoverWallet > 0
       ? `${money(stats.leftoverWallet, activeCurrency)} left in the wallet will also move to savings at month close.`
       : "Leftover wallet money will show here when the month has spendable balance left.",
@@ -47,10 +47,10 @@ export default function DashboardPage() {
           <div className="bg-ink p-6 text-white dark:bg-white dark:text-ink">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm opacity-70">Ready to Assign</p>
-                <h2 className="mt-3 text-4xl font-black tracking-normal sm:text-5xl">{money(stats.readyToAssign, activeCurrency)}</h2>
+                <p className="text-sm opacity-70">Money Left to Spend</p>
+                <h2 className="mt-3 text-4xl font-black tracking-normal sm:text-5xl">{money(stats.walletBalance, activeCurrency)}</h2>
                 <p className="mt-3 max-w-xl text-sm opacity-75">
-                  Money in accounts that has not been assigned to savings or categories yet.
+                  Wallet money minus monthly savings and this month's expenses.
                 </p>
               </div>
               <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-white/10 dark:bg-ink/10">
@@ -59,9 +59,9 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="grid gap-3 p-4 sm:grid-cols-3">
-            <MiniMetric label="Money in Accounts" value={money(stats.walletAmount, activeCurrency)} />
-            <MiniMetric label="Assigned to Categories" value={money(stats.assignedTotal, activeCurrency)} />
-            <MiniMetric label="Activity This Month" value={`-${money(stats.categoryActivity, activeCurrency)}`} tone="red" />
+            <MiniMetric label="Money Added to Wallets" value={money(stats.walletAmount, activeCurrency)} />
+            <MiniMetric label="Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} tone="green" />
+            <MiniMetric label="Expenses This Month" value={money(stats.monthlyExpenses, activeCurrency)} tone="red" />
           </div>
         </Card>
 
@@ -69,7 +69,7 @@ export default function DashboardPage() {
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-bold">Savings Plan</h2>
-              <p className="text-sm text-ink/55 dark:text-white/55">Give savings its own job before assigning the rest.</p>
+              <p className="text-sm text-ink/55 dark:text-white/55">Set aside money before spending.</p>
             </div>
             <PiggyBank className="text-mint" />
           </div>
@@ -97,9 +97,10 @@ export default function DashboardPage() {
       <Card>
         <h2 className="mb-3 text-lg font-bold">How the Numbers Work</h2>
         <div className="grid gap-3 md:grid-cols-3">
-          <FormulaStep label="Ready to Assign" value={`${money(stats.walletAmount, activeCurrency)} - ${money(stats.monthlySavings, activeCurrency)} - ${money(stats.assignedTotal, activeCurrency)} = ${money(stats.readyToAssign, activeCurrency)}`} />
-          <FormulaStep label="Category Available" value={`${money(stats.assignedTotal, activeCurrency)} - ${money(stats.categoryActivity, activeCurrency)} = ${money(stats.categoryAvailable, activeCurrency)}`} />
+          <FormulaStep label="Money Left to Spend" value={`${money(stats.walletAmount, activeCurrency)} - ${money(stats.monthlySavings, activeCurrency)} - ${money(stats.monthlyExpenses, activeCurrency)} = ${money(stats.walletBalance, activeCurrency)}`} />
           <FormulaStep label="Saved This Month" value={`${money(stats.monthlySavings, activeCurrency)} + ${money(stats.leftoverWallet, activeCurrency)} = ${money(stats.totalSavedThisMonth, activeCurrency)}`} />
+          <FormulaStep label="Budget Left" value="Budget limits explain where money was not spent. They do not create extra money." />
+          <FormulaStep label="At Month Close" value="Real leftover wallet money moves into savings history." />
         </div>
       </Card>
 
@@ -107,11 +108,11 @@ export default function DashboardPage() {
         <Card>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-bold">Category Envelopes</h2>
-              <p className="text-sm text-ink/55 dark:text-white/55">Assigned money minus spending equals what is available.</p>
+              <h2 className="text-lg font-bold">Budget Health</h2>
+              <p className="text-sm text-ink/55 dark:text-white/55">Budgets are spending limits. They do not add money to wallets.</p>
             </div>
             <span className="rounded-md bg-mint/10 px-3 py-2 text-sm font-bold text-mint">
-              Available {money(stats.categoryAvailable, activeCurrency)}
+              Budget Left {money(stats.unusedBudget, activeCurrency)}
             </span>
           </div>
           <div className="grid gap-4">
@@ -139,7 +140,7 @@ export default function DashboardPage() {
             })}
             {currentBudgets.length === 0 && (
               <p className="rounded-md bg-ink/[0.03] p-4 text-sm text-ink/60 dark:bg-white/[0.06] dark:text-white/60">
-                Assign money to categories to see envelope progress here.
+                Add budgets for this month to see category progress here.
               </p>
             )}
           </div>
@@ -163,7 +164,7 @@ export default function DashboardPage() {
 
       <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <Card>
-          <h2 className="mb-4 text-lg font-bold">Savings Jobs</h2>
+          <h2 className="mb-4 text-lg font-bold">Savings Breakdown</h2>
           <SavingsBreakdown stats={stats} currency={activeCurrency} />
         </Card>
 
@@ -205,8 +206,8 @@ function SavingsBreakdown({ stats, currency }: { stats: ReturnType<typeof useMon
           <p className="mt-1 text-xl font-black text-mint">{money(stats.monthlySavings, currency)}</p>
         </div>
         <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
-          <p className="text-sm text-ink/60 dark:text-white/60">Available in Categories</p>
-          <p className="mt-1 text-xl font-black">{money(stats.categoryAvailable, currency)}</p>
+          <p className="text-sm text-ink/60 dark:text-white/60">Budget Left</p>
+          <p className="mt-1 text-xl font-black">{money(stats.unusedBudget, currency)}</p>
         </div>
         <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
           <p className="text-sm text-ink/60 dark:text-white/60">Leftover Wallet</p>
@@ -214,7 +215,7 @@ function SavingsBreakdown({ stats, currency }: { stats: ReturnType<typeof useMon
         </div>
       </div>
       <div>
-        <h3 className="mb-3 font-bold">Available by Category</h3>
+        <h3 className="mb-3 font-bold">Budget Left by Category</h3>
         <div className="grid gap-2">
           {visibleBreakdown.map((item) => (
             <div key={item.category} className="flex items-center justify-between rounded-md bg-ink/[0.03] p-3 text-sm dark:bg-white/[0.06]">
@@ -224,7 +225,7 @@ function SavingsBreakdown({ stats, currency }: { stats: ReturnType<typeof useMon
           ))}
           {visibleBreakdown.length === 0 && (
             <p className="rounded-md bg-ink/[0.03] p-3 text-sm text-ink/55 dark:bg-white/[0.06] dark:text-white/55">
-              Available category money will show here after you assign money.
+              Budget left will show here when spending stays below a category limit.
             </p>
           )}
         </div>

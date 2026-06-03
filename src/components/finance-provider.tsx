@@ -486,15 +486,10 @@ export function getMonthlySavingsStats(
     })
     .filter((item) => item.budgeted > 0 || item.amount > 0);
   const unusedBudget = breakdown.reduce((sum, item) => sum + item.amount, 0);
-  const assignedTotal = breakdown.reduce((sum, item) => sum + item.budgeted, 0);
-  const categoryActivity = breakdown.reduce((sum, item) => sum + item.spent, 0);
-  const categoryAvailable = breakdown.reduce((sum, item) => sum + item.amount, 0);
   const monthlyExpenses = transactions
     .filter((item) => sameMonth(item.date, month, year))
     .reduce((sum, item) => sum + Number(item.amount), 0);
-  const cashLeft = Math.max(0, walletAmount - monthlyExpenses);
-  const readyToAssign = walletAmount - monthlySavings - assignedTotal;
-  const walletBalance = Math.max(0, readyToAssign + categoryAvailable);
+  const walletBalance = Math.max(0, walletAmount - monthlySavings - monthlyExpenses);
   const leftoverWallet = currentSavings?.closed_at ? Number(currentSavings.leftover_wallet ?? 0) : walletBalance;
   const totalSavedThisMonth = monthlySavings + leftoverWallet;
   const closedSavingsTotal = savings
@@ -508,11 +503,6 @@ export function getMonthlySavingsStats(
     year,
     walletAmount,
     walletBalance,
-    cashLeft,
-    readyToAssign,
-    assignedTotal,
-    categoryActivity,
-    categoryAvailable,
     monthlySavings,
     unusedBudget,
     leftoverWallet,

@@ -37,20 +37,20 @@ export default function WalletsPage() {
       <Card>
         <div className="grid gap-4 md:grid-cols-3">
           <div>
-            <p className="text-sm text-ink/55 dark:text-white/55">Money in Accounts</p>
+            <p className="text-sm text-ink/55 dark:text-white/55">Money Added to Wallets</p>
             <p className="mt-1 text-2xl font-black">{money(stats.walletAmount, activeCurrency)}</p>
           </div>
           <div>
-            <p className="text-sm text-ink/55 dark:text-white/55">Assigned to Categories</p>
-            <p className="mt-1 text-2xl font-black">{money(stats.assignedTotal, activeCurrency)}</p>
+            <p className="text-sm text-ink/55 dark:text-white/55">Monthly Savings + Expenses</p>
+            <p className="mt-1 text-2xl font-black text-coral">{money(stats.monthlySavings + stats.monthlyExpenses, activeCurrency)}</p>
           </div>
           <div>
-            <p className="text-sm text-ink/55 dark:text-white/55">Ready to Assign</p>
-            <p className={stats.readyToAssign < 0 ? "mt-1 text-2xl font-black text-coral" : "mt-1 text-2xl font-black text-mint"}>{money(stats.readyToAssign, activeCurrency)}</p>
+            <p className="text-sm text-ink/55 dark:text-white/55">Money Left to Spend</p>
+            <p className="mt-1 text-2xl font-black text-mint">{money(stats.walletBalance, activeCurrency)}</p>
           </div>
         </div>
         <p className="mt-4 rounded-md bg-ink/[0.03] p-3 text-sm text-ink/60 dark:bg-white/[0.06] dark:text-white/60">
-          Wallet cards show money in your accounts. Assign that money to savings and category envelopes before spending.
+          Wallet cards show money you added to each wallet. The dashboard subtracts monthly savings and expenses to show money left to spend.
         </p>
       </Card>
 
@@ -92,7 +92,7 @@ export default function WalletsPage() {
                 <p className="text-sm capitalize text-ink/55 dark:text-white/55">{wallet.type}</p>
                 <h2 className="mt-1 text-xl font-bold">{wallet.name}</h2>
                 <p className="mt-5 text-3xl font-black">{money(wallet.balance, activeCurrency)}</p>
-                <p className="mt-2 text-sm text-ink/50 dark:text-white/50">Account money that can be assigned to savings and category envelopes.</p>
+                <p className="mt-2 text-sm text-ink/50 dark:text-white/50">Money added here before monthly savings and expenses are subtracted.</p>
               </div>
               <div className="flex gap-2">
                 <Button variant="secondary" className="size-9 px-0" onClick={() => { setEditing(wallet); form.reset(wallet); }}><Pencil size={16} /></Button>

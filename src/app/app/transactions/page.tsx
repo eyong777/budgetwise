@@ -59,20 +59,20 @@ export default function TransactionsPage() {
       <Card>
         <div className="grid gap-3 md:grid-cols-3">
           <div>
-            <p className="text-sm text-ink/55 dark:text-white/55">Ready to Assign</p>
-            <p className={stats.readyToAssign < 0 ? "mt-1 text-2xl font-black text-coral" : "mt-1 text-2xl font-black text-mint"}>{money(stats.readyToAssign, activeCurrency)}</p>
+            <p className="text-sm text-ink/55 dark:text-white/55">Money Left to Spend</p>
+            <p className="mt-1 text-2xl font-black text-mint">{money(stats.walletBalance, activeCurrency)}</p>
           </div>
           <div>
             <p className="text-sm text-ink/55 dark:text-white/55">Expenses This Month</p>
             <p className="mt-1 text-2xl font-black text-coral">{money(stats.monthlyExpenses, activeCurrency)}</p>
           </div>
           <div>
-            <p className="text-sm text-ink/55 dark:text-white/55">Available in Categories</p>
-            <p className="mt-1 text-2xl font-black">{money(stats.categoryAvailable, activeCurrency)}</p>
+            <p className="text-sm text-ink/55 dark:text-white/55">Monthly Savings Protected</p>
+            <p className="mt-1 text-2xl font-black">{money(stats.monthlySavings, activeCurrency)}</p>
           </div>
         </div>
         <p className="mt-4 rounded-md bg-ink/[0.03] p-3 text-sm text-ink/60 dark:bg-white/[0.06] dark:text-white/60">
-          Adding an expense creates category activity. The category available amount goes down, but monthly savings stays protected.
+          Adding an expense lowers money left to spend. It does not reduce monthly savings.
         </p>
       </Card>
 

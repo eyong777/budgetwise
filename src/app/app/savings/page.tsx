@@ -42,7 +42,7 @@ export default function SavingsPage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="flex items-center gap-2 text-xl font-bold"><PiggyBank className="text-mint" /> Savings Report</h2>
-            <p className="mt-1 text-sm text-ink/55 dark:text-white/55">Savings is protected money. Category envelopes show what is still available for planned spending.</p>
+            <p className="mt-1 text-sm text-ink/55 dark:text-white/55">Monthly savings and real leftover wallet money are stored as savings. Budget limits only explain spending targets.</p>
           </div>
           <div className="flex w-full flex-wrap items-end gap-2 sm:w-auto">
             <form
@@ -72,9 +72,9 @@ export default function SavingsPage() {
           </div>
         </div>
         <div className="mt-5 grid gap-3 md:grid-cols-3">
-          <GuideTile label="1. Monthly Savings" value="Money you protect before assigning the rest." />
-          <GuideTile label="2. Category Available" value="Assigned money that has not been spent yet." />
-          <GuideTile label="3. Month-End Leftover" value="Unassigned cash left at close can become savings." />
+          <GuideTile label="1. Manual Savings" value="The amount you choose to protect first." />
+          <GuideTile label="2. Budget Left" value="A category limit you did not fully use. This explains spending, but does not create money." />
+          <GuideTile label="3. Leftover Wallet" value="Money still left to spend when the month closes." />
         </div>
       </Card>
 
@@ -85,7 +85,7 @@ export default function SavingsPage() {
             <SummaryLine label="Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} />
             <SummaryLine label="Leftover Wallet Balance" value={money(stats.leftoverWallet, activeCurrency)} />
             <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
-              <h3 className="mb-3 font-bold">Available by Category</h3>
+              <h3 className="mb-3 font-bold">Budget Left Breakdown</h3>
               <div className="grid gap-2">
                 {stats.breakdown.map((item) => (
                   <div key={item.category} className="flex justify-between text-sm">
@@ -95,7 +95,7 @@ export default function SavingsPage() {
                 ))}
               </div>
             </div>
-            <SummaryLine label="Available in Categories" value={money(stats.categoryAvailable, activeCurrency)} />
+            <SummaryLine label="Total Budget Left" value={money(stats.unusedBudget, activeCurrency)} />
             <SummaryLine label="Total Saved This Month" value={money(stats.totalSavedThisMonth, activeCurrency)} strong />
             <Button onClick={() => closeMonth(stats.month, stats.year)}>Close Current Month</Button>
           </div>
@@ -124,10 +124,10 @@ export default function SavingsPage() {
             <YAxis />
             <Tooltip formatter={(value: number) => money(value, activeCurrency)} />
             <Legend />
-            <Bar dataKey="monthlySavings" name="Monthly Savings" fill="#28a86b" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="unusedBudget" name="Category Available" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="leftoverWallet" name="Month-End Leftover" fill="#14b8a6" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="totalSaved" name="Total Saved" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="monthlySavings" fill="#28a86b" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="unusedBudget" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="leftoverWallet" fill="#14b8a6" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="totalSaved" fill="#f59e0b" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </Card>
@@ -160,7 +160,7 @@ export default function SavingsPage() {
               </div>
               <div className="grid gap-3 md:grid-cols-4">
                 <SummaryLine label="Monthly Savings" value={money(item.monthly_savings, activeCurrency)} />
-                <SummaryLine label="Category Available" value={money(item.unused_budget, activeCurrency)} />
+                <SummaryLine label="Budget Left" value={money(item.unused_budget, activeCurrency)} />
                 <SummaryLine label="Leftover Wallet" value={money(item.leftover_wallet ?? 0, activeCurrency)} />
                 <SummaryLine label="Total Saved" value={money(item.total_saved, activeCurrency)} strong />
               </div>
