@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Heart, PiggyBank } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import type { FieldErrors } from "react-hook-form";
 import { toast, Toaster } from "sonner";
@@ -34,6 +35,22 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     resolver: zodResolver(schema as typeof authSchema),
     defaultValues: { email: "", password: "", fullName: undefined }
   });
+
+  useEffect(() => {
+    if (isForgot) return;
+    let active = true;
+    try {
+      const supabase = createSupabaseBrowserClient();
+      void supabase.auth.getSession().then(({ data }) => {
+        if (active && data.session) router.replace("/app/dashboard");
+      });
+    } catch {
+      // Supabase is not configured yet.
+    }
+    return () => {
+      active = false;
+    };
+  }, [isForgot, router]);
 
   function onInvalid(errors: FieldErrors<AuthValues>) {
     const firstError = errors.email?.message || errors.password?.message || errors.fullName?.message || "Check the form details.";
@@ -71,7 +88,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     }
 
     toast.success(isRegister ? "Account created" : "Logged in");
-    router.push("/app/dashboard");
+    router.replace("/app/dashboard");
   }
 
   return (

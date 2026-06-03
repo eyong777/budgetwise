@@ -38,7 +38,9 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isAuthRoute && user) {
-    return NextResponse.redirect(new URL("/app/dashboard", request.url));
+    const redirectResponse = NextResponse.redirect(new URL("/app/dashboard", request.url));
+    redirectResponse.headers.set("Cache-Control", "no-store");
+    return redirectResponse;
   }
 
   return response;

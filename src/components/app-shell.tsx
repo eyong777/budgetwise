@@ -63,7 +63,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     } catch {
       localStorage.removeItem("budgetwise-theme");
     }
-    router.push("/login");
+    router.replace("/login");
   }
 
   async function submitRequiredSavings(event: React.FormEvent<HTMLFormElement>) {
