@@ -62,10 +62,9 @@ export default function SavingsPage() {
             Monthly Savings is required after adding wallet money. The app will ask for it automatically.
           </div>
         )}
-        <div className="mt-5 grid gap-3 md:grid-cols-3">
+        <div className="mt-5 grid gap-3 md:grid-cols-2">
           <GuideTile label="1. Manual Savings" value="The amount you choose to protect first." />
-          <GuideTile label="2. Budget Left" value="Budget limit you did not use. This is not added to savings." />
-          <GuideTile label="3. Leftover Wallet" value="Money still left to spend when the month closes." />
+          <GuideTile label="2. Leftover Wallet" value="Money still left to spend when the month closes." />
         </div>
       </Card>
 
@@ -108,7 +107,6 @@ export default function SavingsPage() {
             <Tooltip formatter={(value: number) => money(value, activeCurrency)} />
             <Legend />
             <Bar dataKey="monthlySavings" fill="#28a86b" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="unusedBudget" fill="#3b82f6" radius={[4, 4, 0, 0]} />
             <Bar dataKey="leftoverWallet" fill="#14b8a6" radius={[4, 4, 0, 0]} />
             <Bar dataKey="totalSaved" fill="#f59e0b" radius={[4, 4, 0, 0]} />
           </BarChart>
@@ -141,9 +139,8 @@ export default function SavingsPage() {
                   </Button>
                 </div>
               </div>
-              <div className="grid gap-3 md:grid-cols-4">
+              <div className="grid gap-3 md:grid-cols-3">
                 <SummaryLine label="Monthly Savings" value={money(item.monthly_savings, activeCurrency)} />
-                <SummaryLine label="Budget Left" value={money(item.unused_budget, activeCurrency)} />
                 <SummaryLine label="Leftover Wallet" value={money(item.leftover_wallet ?? 0, activeCurrency)} />
                 <SummaryLine label="Total Saved" value={money(item.total_saved, activeCurrency)} strong />
               </div>
