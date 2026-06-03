@@ -49,7 +49,7 @@ export default function DashboardPage() {
       <Card>
         <h2 className="mb-3 text-lg font-bold">How the Numbers Work</h2>
         <div className="grid gap-3 md:grid-cols-3">
-          <FormulaStep label="Money Left to Spend" value={`${money(stats.walletAmount, activeCurrency)} - ${money(stats.monthlySavings, activeCurrency)} - ${money(stats.monthlyExpenses, activeCurrency)} = ${money(stats.walletBalance, activeCurrency)}`} />
+          <FormulaStep label="Available Balance" value={`${money(stats.walletAmount, activeCurrency)} - ${money(stats.monthlySavings, activeCurrency)} - ${money(stats.monthlyExpenses, activeCurrency)} = ${money(stats.walletBalance, activeCurrency)}`} />
           <FormulaStep label="Saved This Month" value={`${money(stats.monthlySavings, activeCurrency)} + ${money(stats.leftoverWallet, activeCurrency)} = ${money(stats.totalSavedThisMonth, activeCurrency)}`} />
           <FormulaStep label="Budget Left" value="Budget limits explain where money was not spent. They do not create extra money." />
           <FormulaStep label="At Month Close" value="Real leftover wallet money moves into savings history." />
@@ -145,7 +145,7 @@ function SavingsBreakdown({ stats, currency }: { stats: ReturnType<typeof useMon
           <p className="mt-1 text-xl font-black">{money(stats.unusedBudget, currency)}</p>
         </div>
         <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
-          <p className="text-sm text-ink/60 dark:text-white/60">Leftover Wallet</p>
+          <p className="text-sm text-ink/60 dark:text-white/60">Available Balance</p>
           <p className="mt-1 text-xl font-black">{money(stats.leftoverWallet, currency)}</p>
         </div>
       </div>
