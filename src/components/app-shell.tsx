@@ -152,9 +152,12 @@ function ShellInner({ children }: { children: React.ReactNode }) {
               <div>
                 <h2 className="text-xl font-bold">Monthly Savings Required</h2>
                 <p className="mt-1 text-sm text-ink/60 dark:text-white/60">
-                  You already added wallet money. Enter the amount you want to protect as savings before continuing.
+                  You already added wallet money. You must put a Monthly Savings amount before you can continue.
                 </p>
               </div>
+            </div>
+            <div className="mb-4 rounded-md bg-coral/10 p-3 text-sm font-semibold text-coral">
+              Please enter your Monthly Savings amount first.
             </div>
             <label className="grid gap-2 text-sm font-semibold">
               Monthly Savings Amount
