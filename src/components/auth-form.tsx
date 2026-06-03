@@ -77,51 +77,41 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   return (
     <div className="min-h-screen bg-paper px-4 py-8 text-ink dark:bg-[#101412] dark:text-white">
       <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-8 lg:grid-cols-[1fr_440px]">
-        <div className="relative min-h-[470px] overflow-hidden lg:min-h-[650px]">
+        <div className="relative overflow-hidden">
           <Link href="/" className="relative z-10 flex items-center gap-3">
             <span className="grid size-12 place-items-center rounded-lg bg-mint text-white">
               <PiggyBank />
             </span>
             <span className="text-2xl font-bold">BudgetWise</span>
           </Link>
-          <div className="relative z-10 mt-12 max-w-[350px] lg:absolute lg:left-0 lg:top-36 lg:mt-0">
-            <h1 className="text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
-              Build the life <span className="text-mint">you love.</span>
-            </h1>
-            <p className="mt-5 text-lg leading-8 text-ink/65 dark:text-white/65">
-              BudgetWise keeps your money clear, personal, and easy to follow every month.
-            </p>
-          </div>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-[1fr_0.72fr] lg:hidden">
-            <img
-              src={loginPhotos[0]}
-              alt=""
-              className="h-56 w-full rounded-lg object-cover object-[center_70%] shadow-soft"
-            />
-            <img
-              src={loginPhotos[1]}
-              alt=""
-              className="h-56 w-full rounded-lg object-cover object-[center_72%] shadow-soft"
-            />
-          </div>
-
-          <div className="absolute right-0 top-10 hidden h-[590px] w-[540px] lg:block">
-            <img
-              src={loginPhotos[0]}
-              alt=""
-              className="absolute right-4 top-0 h-[500px] w-[340px] rounded-lg object-cover object-[center_72%] shadow-soft"
-            />
-            <img
-              src={loginPhotos[1]}
-              alt=""
-              className="absolute bottom-8 left-4 h-64 w-72 rounded-lg border-4 border-paper object-cover object-[center_72%] shadow-soft dark:border-[#101412]"
-            />
-            <div className="absolute right-0 top-80 grid size-16 place-items-center rounded-full bg-coral text-white shadow-soft">
-              <Heart fill="currentColor" />
+          <div className="mt-10 grid gap-8 lg:mt-16 lg:grid-cols-[320px_1fr] lg:items-center">
+            <div className="relative z-10 max-w-[360px]">
+              <h1 className="text-4xl font-black leading-tight sm:text-5xl lg:text-[4rem]">
+                Build the life <span className="text-mint">you love.</span>
+              </h1>
+              <p className="mt-5 text-lg leading-8 text-ink/65 dark:text-white/65">
+                BudgetWise keeps your money clear, personal, and easy to follow every month.
+              </p>
             </div>
-            <div className="absolute left-14 top-24 rounded-lg bg-white px-4 py-3 text-sm font-bold shadow-soft dark:bg-[#18201c]">
-              Memories worth budgeting for
+
+            <div className="relative min-h-[360px] sm:min-h-[420px] lg:min-h-[520px]">
+              <img
+                src={loginPhotos[0]}
+                alt=""
+                className="absolute right-0 top-0 h-[330px] w-[250px] rounded-lg object-cover object-[center_72%] shadow-soft sm:h-[390px] sm:w-[300px] lg:h-[470px] lg:w-[320px]"
+              />
+              <img
+                src={loginPhotos[1]}
+                alt=""
+                className="absolute bottom-0 left-0 h-44 w-60 rounded-lg border-4 border-paper object-cover object-[center_72%] shadow-soft dark:border-[#101412] sm:h-56 sm:w-72 lg:h-60 lg:w-72"
+              />
+              <div className="absolute right-0 top-64 grid size-14 place-items-center rounded-full bg-coral text-white shadow-soft sm:top-80 lg:top-72">
+                <Heart fill="currentColor" size={24} />
+              </div>
+              <div className="absolute left-4 top-6 max-w-56 rounded-lg bg-white px-4 py-3 text-sm font-bold shadow-soft dark:bg-[#18201c] sm:left-10">
+                Memories worth budgeting for
+              </div>
             </div>
           </div>
         </div>
