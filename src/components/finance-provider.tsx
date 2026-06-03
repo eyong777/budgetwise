@@ -82,11 +82,6 @@ function previousMonth(date = new Date()) {
   return { month: previous.getMonth() + 1, year: previous.getFullYear() };
 }
 
-function nextMonth(month: number, year: number) {
-  const next = new Date(year, month, 1);
-  return { month: next.getMonth() + 1, year: next.getFullYear() };
-}
-
 function sameMonth(dateText: string, month: number, year: number) {
   const date = new Date(dateText);
   return date.getMonth() + 1 === month && date.getFullYear() === year;
@@ -101,11 +96,14 @@ function monthDateRange(month: number, year: number) {
 
 function uniqueBudgetsForMonth(budgets: Budget[], month: number, year: number) {
   const byCategory = new Map<string, Budget>();
-  budgets
-    .filter((budget) => budget.month === month && budget.year === year)
-    .forEach((budget) => {
-      if (!byCategory.has(budget.category)) byCategory.set(budget.category, budget);
-    });
+  const sorted = [...budgets].sort((a, b) => {
+    const aCurrent = a.month === month && a.year === year ? 0 : 1;
+    const bCurrent = b.month === month && b.year === year ? 0 : 1;
+    return aCurrent - bCurrent || b.year - a.year || b.month - a.month;
+  });
+  sorted.forEach((budget) => {
+    if (!byCategory.has(budget.category)) byCategory.set(budget.category, budget);
+  });
   return Array.from(byCategory.values());
 }
 
@@ -215,38 +213,6 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       if (breakdownError) toast.error(breakdownError.message);
     }
   }, [calculateBreakdown, client, savingsSchemaReady, transactions, userId, wallets]);
-
-  const copyBudgetsToNextMonth = useCallback(async (month: number, year: number) => {
-    const next = nextMonth(month, year);
-    const sourceBudgets = uniqueBudgetsForMonth(budgets, month, year);
-    if (!sourceBudgets.length) return;
-
-    if (!client || !userId || !savingsSchemaReady) {
-      setBudgets((current) => {
-        const existingKeys = new Set(current.map((budget) => `${budget.category}-${budget.month}-${budget.year}`));
-        const copies = sourceBudgets
-          .filter((budget) => !existingKeys.has(`${budget.category}-${next.month}-${next.year}`))
-          .map((budget) => ({
-            ...budget,
-            id: `demo-${next.year}-${next.month}-${budget.category}`,
-            month: next.month,
-            year: next.year
-          }));
-        return [...copies, ...current];
-      });
-      return;
-    }
-
-    const rows = sourceBudgets.map((budget) => ({
-      user_id: userId,
-      category: budget.category,
-      limit_amount: budget.limit_amount,
-      month: next.month,
-      year: next.year
-    }));
-    const { error } = await client.from("budgets").upsert(rows, { onConflict: "user_id,category,month,year" });
-    if (error) toast.error(error.message);
-  }, [budgets, client, savingsSchemaReady, userId]);
 
   const refresh = useCallback(async () => {
     if (!client) return;
@@ -408,8 +374,6 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       const category = String(budget.category);
       const existing = budgets.find((item) =>
         item.category === category &&
-        Number(item.month) === month &&
-        Number(item.year) === year &&
         item.id !== budget.id
       );
       const targetId = existing?.id ?? budget.id;
@@ -508,7 +472,6 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       }
       const existing = savings.find((item) => item.month === month && item.year === year);
       await saveSavingsRecord(existing?.monthly_savings ?? 0, month, year, true);
-      await copyBudgetsToNextMonth(month, year);
       if (client && wallets.length) {
         await Promise.all(wallets.map((wallet) => client.from("wallets").update({ balance: 0 }).eq("id", wallet.id)));
         const range = monthDateRange(month, year);
@@ -539,7 +502,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       error ? toast.error(error.message) : toast.success("Profile updated");
       await refresh();
     }
-  }), [budgets, client, copyBudgetsToNextMonth, currency, loading, profile, recurring, refresh, saveSavingsRecord, savings, savingsBreakdowns, savingsSchemaReady, transactions, userId, wallets]);
+  }), [budgets, client, currency, loading, profile, recurring, refresh, saveSavingsRecord, savings, savingsBreakdowns, savingsSchemaReady, transactions, userId, wallets]);
 
   return <FinanceContext.Provider value={value}>{children}</FinanceContext.Provider>;
 }

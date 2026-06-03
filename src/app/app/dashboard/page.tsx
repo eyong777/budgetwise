@@ -14,8 +14,17 @@ export default function DashboardPage() {
   const activeCurrency = currency as Currency;
   const stats = useMonthlyStats();
   const latest = transactions.slice(0, 5);
-  const currentBudgets = budgets
-    .filter((budget) => budget.month === stats.month && budget.year === stats.year);
+  const currentBudgets = Array.from(
+    new Map(
+      [...budgets]
+        .sort((a, b) => {
+          const aCurrent = a.month === stats.month && a.year === stats.year ? 0 : 1;
+          const bCurrent = b.month === stats.month && b.year === stats.year ? 0 : 1;
+          return aCurrent - bCurrent || b.year - a.year || b.month - a.month;
+        })
+        .map((budget) => [budget.category, budget])
+    ).values()
+  );
   const overspent = currentBudgets.filter((budget) => {
     const spent = transactions
       .filter((item) => item.category === budget.category)

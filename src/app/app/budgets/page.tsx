@@ -25,7 +25,7 @@ export default function BudgetsPage() {
   const currentBudgets = Array.from(
     new Map(
       budgets
-        .filter((budget) => budget.month === now.month && budget.year === now.year)
+        .sort((a, b) => b.year - a.year || b.month - a.month)
         .map((budget) => [budget.category, budget])
     ).values()
   );
@@ -104,7 +104,7 @@ export default function BudgetsPage() {
         {currentBudgets.length === 0 && (
           <Card>
             <p className="text-sm text-ink/60 dark:text-white/60">
-              No budgets for {now.month}/{now.year} yet.
+              No budgets yet.
             </p>
           </Card>
         )}
