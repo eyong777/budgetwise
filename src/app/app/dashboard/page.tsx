@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, ArrowDownRight, Lightbulb, Wallet } from "lucide-react";
+import { ArrowDownRight, Wallet } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useFinance, useMonthlyStats } from "@/components/finance-provider";
@@ -23,28 +23,6 @@ export default function DashboardPage() {
         .map((budget) => [budget.category, budget])
     ).values()
   );
-  const overspent = currentBudgets.filter((budget) => {
-    const spent = transactions
-      .filter((item) => item.category === budget.category)
-      .filter((item) => {
-        const date = new Date(item.date);
-        return date.getMonth() + 1 === budget.month && date.getFullYear() === budget.year;
-      })
-      .reduce((sum, item) => sum + Number(item.amount), 0);
-    return spent > Number(budget.limit_amount);
-  });
-  const insights = [
-    stats.walletBalance <= 0
-      ? "Money left to spend is zero because savings and expenses used the wallet money."
-      : "Money left to spend is wallet money minus monthly savings and expenses.",
-    stats.unusedBudget > 0
-      ? `${money(stats.unusedBudget, activeCurrency)} is budget limit left. It is not added to saved money.`
-      : "Budget left will appear here when spending stays below budget limits.",
-    stats.leftoverWallet > 0
-      ? `${money(stats.leftoverWallet, activeCurrency)} left in the wallet will also move to savings at month close.`
-      : "Leftover wallet money will show here when the month has spendable balance left.",
-    overspent.length > 0 ? `${overspent.length} budget ${overspent.length === 1 ? "category needs" : "categories need"} attention.` : "Budgets are currently under control."
-  ];
 
   return (
     <div className="grid gap-6">
@@ -81,7 +59,7 @@ export default function DashboardPage() {
         </div>
       </Card>
 
-      <section className="grid gap-6 xl:grid-cols-[1fr_0.85fr]">
+      <section>
         <Card>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -120,21 +98,6 @@ export default function DashboardPage() {
                 Add budgets for this month to see category progress here.
               </p>
             )}
-          </div>
-        </Card>
-
-        <Card>
-          <div className="mb-4 flex items-center gap-2">
-            <Lightbulb className="text-mint" size={20} />
-            <h2 className="text-lg font-bold">Friendly Notes</h2>
-          </div>
-          <div className="grid gap-3">
-            {insights.map((insight) => (
-              <div key={insight} className="flex gap-3 rounded-md bg-ink/[0.03] p-3 text-sm dark:bg-white/[0.06]">
-                {insight.includes("attention") || insight.includes("fully") ? <AlertTriangle className="shrink-0 text-coral" size={18} /> : <Lightbulb className="shrink-0 text-mint" size={18} />}
-                <span>{insight}</span>
-              </div>
-            ))}
           </div>
         </Card>
       </section>
