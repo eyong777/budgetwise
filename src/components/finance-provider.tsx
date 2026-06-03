@@ -411,7 +411,17 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         toast.success("Savings month deleted");
         return;
       }
-      const { error } = await client.from("savings").delete().eq("id", id);
+      const { error: breakdownError } = await client
+        .from("savings_breakdown")
+        .delete()
+        .eq("user_id", userId)
+        .eq("month", month)
+        .eq("year", year);
+      if (breakdownError) {
+        toast.error(breakdownError.message);
+        return;
+      }
+      const { error } = await client.from("savings").delete().eq("id", id).eq("user_id", userId);
       if (error) {
         toast.error(error.message);
         return;
