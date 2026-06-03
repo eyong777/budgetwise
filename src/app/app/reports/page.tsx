@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Printer } from "lucide-react";
+import { PiggyBank, Printer } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -20,6 +20,7 @@ export default function ReportsPage() {
   const [view, setView] = useState("monthly");
   const currentYear = new Date().getFullYear();
   const reportMonthName = new Date(stats.year, stats.month - 1, 1).toLocaleString(undefined, { month: "long", year: "numeric" });
+  const generatedAt = new Date();
 
   const monthly = useMemo(() => {
     const rows = Array.from({ length: 12 }, (_, index) => ({
@@ -89,13 +90,20 @@ export default function ReportsPage() {
       over: Math.max(0, spent - Number(budget.limit_amount))
     };
   });
+  const totalBudget = currentBudgetRows.reduce((sum, row) => sum + row.budgeted, 0);
+  const totalBudgetSpent = currentBudgetRows.reduce((sum, row) => sum + row.spent, 0);
+  const remainingBudget = currentBudgetRows.reduce((sum, row) => sum + row.left, 0);
+  const budgetUtilization = totalBudget > 0 ? (totalBudgetSpent / totalBudget) * 100 : 0;
+  const highestExpenseCategory = expenseRows.length
+    ? expenseRows.reduce((highest, row) => row.amount > highest.amount ? row : highest, expenseRows[0])
+    : null;
 
   return (
     <div className="grid gap-6">
       <Card className="no-print">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl font-bold">Reports & Analytics</h2>
+            <h2 className="text-xl font-bold">Monthly Financial Report</h2>
             <p className="text-sm text-ink/55 dark:text-white/55">{view === "monthly" ? "Monthly report view" : "Yearly report view"} for {currentYear}</p>
           </div>
           <div className="flex flex-wrap items-end gap-3">
@@ -169,26 +177,60 @@ export default function ReportsPage() {
       </div>
 
       <Card className="print-report">
-        <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+        <div className="mb-6 flex flex-wrap items-start justify-between gap-3 border-b border-ink/10 pb-5 dark:border-white/10">
           <div>
-            <h2 className="text-2xl font-black">BudgetWise Printable Report</h2>
-            <p className="mt-1 text-sm text-ink/55 dark:text-white/55">Current month report for {reportMonthName}</p>
+            <div className="mb-4 flex items-center gap-3">
+              <span className="grid size-11 place-items-center rounded-lg bg-mint text-white">
+                <PiggyBank />
+              </span>
+              <span className="text-xl font-black">BudgetWise</span>
+            </div>
+            <h2 className="text-3xl font-black">Monthly Financial Report</h2>
+            <p className="mt-1 text-sm text-ink/55 dark:text-white/55">Report period: {reportMonthName}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <p className="text-sm text-ink/55 dark:text-white/55">Generated {new Date().toLocaleDateString()}</p>
-            <Button type="button" className="no-print" onClick={() => window.print()}>
+            <p className="text-sm text-ink/55 dark:text-white/55">Generated {generatedAt.toLocaleString()}</p>
+            <Button type="button" className="no-print h-11 px-5" onClick={() => window.print()}>
               <Printer size={16} />
               Print This Report
             </Button>
           </div>
         </div>
 
+        <ReportSection title="Financial Summary">
         <div className="grid gap-3 md:grid-cols-4">
-          <ReportMetric label="Wallet Money" value={money(stats.walletAmount, activeCurrency)} />
-          <ReportMetric label="Wallet Left" value={money(stats.walletBalance, activeCurrency)} />
-          <ReportMetric label="Expenses This Month" value={money(stats.monthlyExpenses, activeCurrency)} tone="red" />
-          <ReportMetric label="Saved This Month" value={money(stats.totalSavedThisMonth, activeCurrency)} tone="green" />
+          <ReportMetric label="Savings This Month" value={money(stats.totalSavedThisMonth, activeCurrency)} tone="green" />
+          <ReportMetric label="Budget Not Spent" value={money(stats.unusedBudget, activeCurrency)} />
+          <ReportMetric label="Total Expenses" value={money(stats.monthlyExpenses, activeCurrency)} tone="red" />
+          <ReportMetric label="Wallet Money Not Spent" value={money(stats.walletBalance, activeCurrency)} />
         </div>
+        </ReportSection>
+
+        <ReportSection title="Savings">
+          <div className="grid gap-3 md:grid-cols-3">
+            <ReportMetric label="Current Month Savings" value={money(stats.monthlySavings, activeCurrency)} tone="green" />
+            <ReportMetric label="Percentage of Income Saved" value="N/A" />
+            <ReportMetric label="Total Saved This Month" value={money(stats.totalSavedThisMonth, activeCurrency)} tone="green" />
+          </div>
+          <div className="mt-4 rounded-md border border-ink/10 p-4 dark:border-white/10">
+            <p className="mb-3 text-sm font-bold text-ink/65 dark:text-white/65">Monthly trend visualization</p>
+            <div className="flex h-24 items-end gap-2">
+              {monthly.map((row) => {
+                const maxSaved = Math.max(...monthly.map((item) => item.saved), 1);
+                return <div key={row.label} className="flex-1 rounded-t bg-mint/70" style={{ height: `${Math.max(8, (row.saved / maxSaved) * 100)}%` }} title={`${row.label}: ${money(row.saved, activeCurrency)}`} />;
+              })}
+            </div>
+          </div>
+        </ReportSection>
+
+        <ReportSection title="Budget">
+          <div className="grid gap-3 md:grid-cols-4">
+            <ReportMetric label="Total Budget" value={money(totalBudget, activeCurrency)} />
+            <ReportMetric label="Total Spent" value={money(totalBudgetSpent, activeCurrency)} tone="red" />
+            <ReportMetric label="Remaining Budget" value={money(remainingBudget, activeCurrency)} tone="green" />
+            <ReportMetric label="Budget Utilization" value={`${budgetUtilization.toFixed(1)}%`} />
+          </div>
+        </ReportSection>
 
         <div className="mt-6 grid gap-6 xl:grid-cols-2">
           <ReportTable title="Wallets">
@@ -223,7 +265,7 @@ export default function ReportsPage() {
           </ReportTable>
         </div>
 
-        <div className="mt-6">
+        <ReportSection title="Budget Details">
           <ReportTable title="Budget Health">
             <thead>
               <tr>
@@ -247,9 +289,17 @@ export default function ReportsPage() {
               {currentBudgetRows.length === 0 && <EmptyTableRow colSpan={5} text="No budgets added." />}
             </tbody>
           </ReportTable>
-        </div>
+        </ReportSection>
 
-        <div className="mt-6">
+        <ReportSection title="Expenses">
+          <div className="mb-4 grid gap-3 md:grid-cols-3">
+            <ReportMetric label="Total Expenses" value={money(stats.monthlyExpenses, activeCurrency)} tone="red" />
+            <ReportMetric label="Highest Spending Category" value={highestExpenseCategory ? highestExpenseCategory.category : "N/A"} />
+            <ReportMetric label="Highest Category Amount" value={highestExpenseCategory ? money(highestExpenseCategory.amount, activeCurrency) : money(0, activeCurrency)} />
+          </div>
+        </ReportSection>
+
+        <ReportSection title="Expense Details">
           <ReportTable title="Expense Details">
             <thead>
               <tr>
@@ -271,7 +321,20 @@ export default function ReportsPage() {
               {currentMonthTransactions.length === 0 && <EmptyTableRow colSpan={4} text="No expense details this month." />}
             </tbody>
           </ReportTable>
-        </div>
+        </ReportSection>
+
+        <ReportSection title="Wallet Balance">
+          <div className="grid gap-3 md:grid-cols-2">
+            <ReportMetric label="Current Wallet Balance" value={money(stats.walletAmount, activeCurrency)} />
+            <ReportMetric label="Remaining Available Funds" value={money(stats.walletBalance, activeCurrency)} tone="green" />
+          </div>
+        </ReportSection>
+
+        <footer className="report-footer mt-8 flex items-center justify-between border-t border-ink/10 pt-4 text-xs text-ink/50 dark:border-white/10 dark:text-white/50">
+          <span>BudgetWise Monthly Financial Report</span>
+          <span>Generated {generatedAt.toLocaleString()}</span>
+          <span>Page 1</span>
+        </footer>
       </Card>
     </div>
   );
@@ -292,6 +355,15 @@ function ReportMetric({ label, value, tone = "default" }: { label: string; value
       <p className="text-sm text-ink/55 dark:text-white/55">{label}</p>
       <p className={tone === "green" ? "mt-1 text-xl font-black text-mint" : tone === "red" ? "mt-1 text-xl font-black text-coral" : "mt-1 text-xl font-black"}>{value}</p>
     </div>
+  );
+}
+
+function ReportSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="report-section mt-6">
+      <h3 className="mb-3 text-lg font-black">{title}</h3>
+      {children}
+    </section>
   );
 }
 

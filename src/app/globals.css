@@ -33,6 +33,11 @@ body {
 }
 
 @media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
   body {
     background: white !important;
   }
@@ -57,6 +62,34 @@ body {
     background: white !important;
     color: #17201a !important;
     padding: 0 !important;
+  }
+
+  .print-report,
+  .report-section,
+  .print-report table {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .report-section {
+    margin-top: 18px !important;
+  }
+
+  .print-report table {
+    font-size: 11px !important;
+  }
+
+  .print-report table th,
+  .print-report table td {
+    padding: 7px 6px !important;
+  }
+
+  .report-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
   }
 
   .print-report * {
