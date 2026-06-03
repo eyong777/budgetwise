@@ -7,11 +7,11 @@ export function Field({
   ...props
 }: InputHTMLAttributes<HTMLInputElement> & { label: string }) {
   return (
-    <label className="grid gap-1.5 text-sm font-medium text-ink/70 dark:text-white/70">
+    <label className="grid min-w-0 gap-1.5 text-sm font-medium text-ink/70 dark:text-white/70">
       {label}
       <input
         className={cn(
-          "h-10 rounded-md border border-ink/10 bg-white px-3 text-sm text-ink outline-none transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
+          "h-10 w-full min-w-0 rounded-md border border-ink/10 bg-white px-3 text-sm text-ink outline-none transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
           className
         )}
         {...props}
@@ -27,11 +27,11 @@ export function SelectField({
   ...props
 }: SelectHTMLAttributes<HTMLSelectElement> & { label: string }) {
   return (
-    <label className="grid gap-1.5 text-sm font-medium text-ink/70 dark:text-white/70">
+    <label className="grid min-w-0 gap-1.5 text-sm font-medium text-ink/70 dark:text-white/70">
       {label}
       <select
         className={cn(
-          "h-10 rounded-md border border-ink/10 bg-white px-3 text-sm text-ink outline-none transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
+          "h-10 w-full min-w-0 rounded-md border border-ink/10 bg-white px-3 text-sm text-ink outline-none transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
           className
         )}
         {...props}
@@ -48,11 +48,11 @@ export function TextAreaField({
   ...props
 }: TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }) {
   return (
-    <label className="grid gap-1.5 text-sm font-medium text-ink/70 dark:text-white/70">
+    <label className="grid min-w-0 gap-1.5 text-sm font-medium text-ink/70 dark:text-white/70">
       {label}
       <textarea
         className={cn(
-          "min-h-20 rounded-md border border-ink/10 bg-white px-3 py-2 text-sm text-ink outline-none transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
+          "min-h-20 w-full min-w-0 rounded-md border border-ink/10 bg-white px-3 py-2 text-sm text-ink outline-none transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
           className
         )}
         {...props}

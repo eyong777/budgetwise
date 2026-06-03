@@ -47,8 +47,8 @@ export default function BudgetsPage() {
           </SelectField>
           <Field label="Limit amount" type="number" step="0.01" {...form.register("limit_amount")} />
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Month" type="number" {...form.register("month")} />
-            <Field label="Year" type="number" {...form.register("year")} />
+            <Field label="Month" type="number" className="min-w-0 w-full" {...form.register("month")} />
+            <Field label="Year" type="number" className="min-w-0 w-full" {...form.register("year")} />
           </div>
           <Button>{editing ? "Save budget" : "Add budget"}</Button>
         </form>
