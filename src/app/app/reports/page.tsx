@@ -174,7 +174,13 @@ export default function ReportsPage() {
             <h2 className="text-2xl font-black">BudgetWise Printable Report</h2>
             <p className="mt-1 text-sm text-ink/55 dark:text-white/55">Current month report for {reportMonthName}</p>
           </div>
-          <p className="text-sm text-ink/55 dark:text-white/55">Generated {new Date().toLocaleDateString()}</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="text-sm text-ink/55 dark:text-white/55">Generated {new Date().toLocaleDateString()}</p>
+            <Button type="button" className="no-print" onClick={() => window.print()}>
+              <Printer size={16} />
+              Print This Report
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-3 md:grid-cols-4">
