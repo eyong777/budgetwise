@@ -11,7 +11,7 @@ export function Field({
       {label}
       <input
         className={cn(
-          "h-10 w-full min-w-0 rounded-md border border-ink/10 bg-white px-3 text-sm text-ink outline-none transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
+          "h-10 w-full min-w-0 rounded-md border border-white/60 bg-white/65 px-3 text-sm text-ink outline-none backdrop-blur transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
           className
         )}
         {...props}
@@ -31,7 +31,7 @@ export function SelectField({
       {label}
       <select
         className={cn(
-          "h-10 w-full min-w-0 rounded-md border border-ink/10 bg-white px-3 text-sm text-ink outline-none transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
+          "h-10 w-full min-w-0 rounded-md border border-white/60 bg-white/65 px-3 text-sm text-ink outline-none backdrop-blur transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
           className
         )}
         {...props}
@@ -52,7 +52,7 @@ export function TextAreaField({
       {label}
       <textarea
         className={cn(
-          "min-h-20 w-full min-w-0 rounded-md border border-ink/10 bg-white px-3 py-2 text-sm text-ink outline-none transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
+          "min-h-20 w-full min-w-0 rounded-md border border-white/60 bg-white/65 px-3 py-2 text-sm text-ink outline-none backdrop-blur transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
           className
         )}
         {...props}

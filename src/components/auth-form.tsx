@@ -126,14 +126,14 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
               <div className="absolute right-0 top-64 grid size-14 place-items-center rounded-full bg-coral text-white shadow-soft sm:top-80 lg:top-72">
                 <Heart fill="currentColor" size={24} />
               </div>
-              <div className="absolute left-4 top-6 max-w-56 rounded-lg bg-white px-4 py-3 text-sm font-bold shadow-soft dark:bg-[#18201c] sm:left-10">
+              <div className="absolute left-4 top-6 max-w-56 rounded-lg border border-white/50 bg-white/70 px-4 py-3 text-sm font-bold shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-[#18201c]/80 sm:left-10">
                 Memories worth budgeting for
               </div>
             </div>
           </div>
         </div>
 
-        <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="rounded-lg border border-ink/10 bg-white p-6 shadow-soft dark:border-white/10 dark:bg-white/[0.06]">
+        <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="rounded-lg border border-white/55 bg-white/70 p-6 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.08]">
           <div className="mb-6">
             <h2 className="text-2xl font-bold">{isForgot ? "Reset password" : isRegister ? "Create account" : "Log in"}</h2>
             <p className="mt-1 text-sm text-ink/55 dark:text-white/55">

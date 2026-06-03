@@ -97,17 +97,17 @@ export default function TransactionsPage() {
         <div className="mb-4 grid gap-3 md:grid-cols-[1fr_150px_150px_150px]">
           <label className="relative">
             <Search className="pointer-events-none absolute left-3 top-2.5 text-ink/40 dark:text-white/40" size={18} />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search expenses" className="h-10 w-full rounded-md border border-ink/10 bg-white pl-10 pr-3 text-sm outline-none focus:border-mint dark:border-white/10 dark:bg-white/10" />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search expenses" className="h-10 w-full rounded-md border border-white/60 bg-white/65 pl-10 pr-3 text-sm outline-none backdrop-blur focus:border-mint dark:border-white/10 dark:bg-white/10" />
           </label>
-          <select value={category} onChange={(e) => setCategory(e.target.value)} className="h-10 rounded-md border border-ink/10 bg-white px-3 text-sm dark:border-white/10 dark:bg-white/10">
+          <select value={category} onChange={(e) => setCategory(e.target.value)} className="h-10 rounded-md border border-white/60 bg-white/65 px-3 text-sm backdrop-blur dark:border-white/10 dark:bg-white/10">
             <option value="">All categories</option>
             {expenseCategories.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
-          <select value={wallet} onChange={(e) => setWallet(e.target.value)} className="h-10 rounded-md border border-ink/10 bg-white px-3 text-sm dark:border-white/10 dark:bg-white/10">
+          <select value={wallet} onChange={(e) => setWallet(e.target.value)} className="h-10 rounded-md border border-white/60 bg-white/65 px-3 text-sm backdrop-blur dark:border-white/10 dark:bg-white/10">
             <option value="">All wallets</option>
             {wallets.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
-          <select value={sort} onChange={(e) => setSort(e.target.value)} className="h-10 rounded-md border border-ink/10 bg-white px-3 text-sm dark:border-white/10 dark:bg-white/10">
+          <select value={sort} onChange={(e) => setSort(e.target.value)} className="h-10 rounded-md border border-white/60 bg-white/65 px-3 text-sm backdrop-blur dark:border-white/10 dark:bg-white/10">
             <option value="date-desc">Newest</option>
             <option value="date-asc">Oldest</option>
             <option value="amount-desc">Amount high</option>

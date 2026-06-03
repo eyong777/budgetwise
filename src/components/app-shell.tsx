@@ -123,8 +123,8 @@ function ShellInner({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-paper text-ink dark:bg-[#101412] dark:text-white">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-ink/10 bg-white/90 p-4 backdrop-blur dark:border-white/10 dark:bg-[#121816]/95 lg:block">
+    <div className="min-h-screen bg-[linear-gradient(135deg,#f7f8f4_0%,#eef7f1_48%,#f7f8f4_100%)] text-ink dark:bg-[linear-gradient(135deg,#101412_0%,#132018_52%,#101412_100%)] dark:text-white">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-white/45 bg-white/55 p-4 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-[#121816]/70 lg:block">
         <Link href="/app/dashboard" className="mb-8 flex items-center gap-3 px-2 pt-2">
           <span className="grid size-11 place-items-center rounded-lg bg-mint text-white">
             <PiggyBank />
@@ -156,7 +156,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
       </aside>
 
       <main className="lg:pl-72">
-        <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between border-b border-ink/10 bg-paper/85 px-4 backdrop-blur dark:border-white/10 dark:bg-[#101412]/85 sm:px-6">
+        <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between border-b border-white/45 bg-white/45 px-4 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-[#101412]/60 sm:px-6">
           <div>
             <p className="text-sm text-ink/50 dark:text-white/50">Welcome back</p>
             <h1 className="text-xl font-bold">{profile?.full_name || "BudgetWise user"}</h1>
@@ -173,7 +173,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6">{children}</div>
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-ink/10 bg-white px-2 py-2 dark:border-white/10 dark:bg-[#121816] lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-white/45 bg-white/70 px-2 py-2 backdrop-blur-xl dark:border-white/10 dark:bg-[#121816]/80 lg:hidden">
         {links.slice(0, 8).map((item) => {
           const active = pathname === item.href;
           const Icon = item.icon;
@@ -186,8 +186,8 @@ function ShellInner({ children }: { children: React.ReactNode }) {
         })}
       </nav>
       {savingsRequired && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-ink/55 px-4 backdrop-blur-sm dark:bg-black/65">
-          <form onSubmit={submitRequiredSavings} className="w-full max-w-md rounded-lg border border-ink/10 bg-white p-6 shadow-soft dark:border-white/10 dark:bg-[#121816]">
+        <div className="fixed inset-0 z-50 grid place-items-center bg-ink/45 px-4 backdrop-blur-md dark:bg-black/55">
+          <form onSubmit={submitRequiredSavings} className="w-full max-w-md rounded-lg border border-white/50 bg-white/75 p-6 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-[#121816]/85">
             <div className="mb-5 flex items-start gap-3">
               <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-mint text-white">
                 <PiggyBank />
