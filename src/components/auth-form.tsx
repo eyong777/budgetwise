@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PiggyBank } from "lucide-react";
+import { Heart, PiggyBank } from "lucide-react";
 import { useForm } from "react-hook-form";
 import type { FieldErrors } from "react-hook-form";
 import { toast, Toaster } from "sonner";
@@ -15,6 +15,15 @@ import { Field } from "./ui/field";
 
 type AuthMode = "login" | "register" | "forgot";
 type AuthValues = z.infer<typeof authSchema>;
+
+const loginPhotos = [
+  "/login-photos/login-photo-1.jpg",
+  "/login-photos/login-photo-2.jpg",
+  "/login-photos/login-photo-3.jpg",
+  "/login-photos/login-photo-4.jpg",
+  "/login-photos/login-photo-5.jpg",
+  "/login-photos/login-photo-6.jpg"
+];
 
 export function AuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
@@ -71,18 +80,61 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
   return (
     <div className="min-h-screen bg-paper px-4 py-8 text-ink dark:bg-[#101412] dark:text-white">
-      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-5xl items-center gap-8 lg:grid-cols-[1fr_440px]">
-        <div className="hidden lg:block">
-          <Link href="/" className="mb-8 flex items-center gap-3">
+      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-8 lg:grid-cols-[1fr_440px]">
+        <div className="relative hidden min-h-[650px] overflow-hidden lg:block">
+          <Link href="/" className="relative z-10 flex items-center gap-3">
             <span className="grid size-12 place-items-center rounded-lg bg-mint text-white">
               <PiggyBank />
             </span>
             <span className="text-2xl font-bold">BudgetWise</span>
           </Link>
-          <h1 className="max-w-xl text-5xl font-black leading-tight">Calm, complete control over everyday money.</h1>
-          <p className="mt-5 max-w-lg text-lg text-ink/65 dark:text-white/65">
-            Track wallets, budgets, protected savings, recurring bills, and financial patterns in one clean workspace.
-          </p>
+          <div className="absolute left-0 top-36 z-10 max-w-[350px]">
+            <h1 className="text-6xl font-black leading-tight">
+              Build the life <span className="text-mint">you love.</span>
+            </h1>
+            <p className="mt-5 text-lg leading-8 text-ink/65 dark:text-white/65">
+              BudgetWise keeps your money clear, personal, and easy to follow every month.
+            </p>
+          </div>
+
+          <div className="absolute right-0 top-12 h-[570px] w-[540px]">
+            <img
+              src={loginPhotos[0]}
+              alt=""
+              className="absolute right-8 top-12 h-80 w-64 rounded-lg object-cover shadow-soft"
+            />
+            <img
+              src={loginPhotos[1]}
+              alt=""
+              className="absolute left-10 top-36 h-44 w-56 rounded-lg object-cover shadow-soft"
+            />
+            <img
+              src={loginPhotos[2]}
+              alt=""
+              className="absolute bottom-20 left-28 h-44 w-52 rounded-lg object-cover shadow-soft"
+            />
+            <img
+              src={loginPhotos[3]}
+              alt=""
+              className="absolute bottom-4 right-16 h-32 w-32 rounded-full border-4 border-white object-cover shadow-soft dark:border-[#101412]"
+            />
+            <img
+              src={loginPhotos[4]}
+              alt=""
+              className="absolute right-0 top-0 h-28 w-36 rounded-lg object-cover shadow-soft"
+            />
+            <img
+              src={loginPhotos[5]}
+              alt=""
+              className="absolute bottom-0 left-0 h-28 w-40 rounded-lg object-cover shadow-soft"
+            />
+            <div className="absolute right-0 top-52 grid size-16 place-items-center rounded-full bg-coral text-3xl text-white shadow-soft">
+              <Heart fill="currentColor" />
+            </div>
+            <div className="absolute left-0 top-20 rounded-full bg-[#f6c64f] px-3 py-2 text-2xl shadow-soft">
+              :)
+            </div>
+          </div>
         </div>
 
         <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="rounded-lg border border-ink/10 bg-white p-6 shadow-soft dark:border-white/10 dark:bg-white/[0.06]">
