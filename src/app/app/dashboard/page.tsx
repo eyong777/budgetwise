@@ -23,6 +23,7 @@ export default function DashboardPage() {
         .map((budget) => [budget.category, budget])
     ).values()
   );
+  const monthlyBudget = currentBudgets.reduce((sum, budget) => sum + Number(budget.limit_amount), 0);
 
   return (
     <div className="grid gap-6">
@@ -39,8 +40,9 @@ export default function DashboardPage() {
               </span>
             </div>
           </div>
-          <div className="grid gap-3 p-4 sm:grid-cols-2">
+          <div className="grid gap-3 p-4 sm:grid-cols-3">
             <MiniMetric label="Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} tone="green" />
+            <MiniMetric label="Monthly Budget" value={money(monthlyBudget, activeCurrency)} />
             <MiniMetric label="Expenses This Month" value={money(stats.monthlyExpenses, activeCurrency)} tone="red" />
           </div>
         </Card>
@@ -92,7 +94,7 @@ export default function DashboardPage() {
       <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <Card>
           <h2 className="mb-4 text-lg font-bold">Savings Breakdown</h2>
-          <SavingsBreakdown stats={stats} currency={activeCurrency} />
+          <SavingsBreakdown stats={stats} monthlyBudget={monthlyBudget} currency={activeCurrency} />
         </Card>
 
         <Card>
@@ -122,7 +124,7 @@ export default function DashboardPage() {
   );
 }
 
-function SavingsBreakdown({ stats, currency }: { stats: ReturnType<typeof useMonthlyStats>; currency: Currency }) {
+function SavingsBreakdown({ stats, monthlyBudget, currency }: { stats: ReturnType<typeof useMonthlyStats>; monthlyBudget: number; currency: Currency }) {
   return (
     <div className="grid gap-4">
       <div className="grid gap-3 sm:grid-cols-3">
@@ -132,7 +134,7 @@ function SavingsBreakdown({ stats, currency }: { stats: ReturnType<typeof useMon
         </div>
         <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
           <p className="text-sm text-ink/60 dark:text-white/60">Monthly Budget</p>
-          <p className="mt-1 text-xl font-black">{money(stats.unusedBudget, currency)}</p>
+          <p className="mt-1 text-xl font-black">{money(monthlyBudget, currency)}</p>
         </div>
         <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
           <p className="text-sm text-ink/60 dark:text-white/60">Available Balance</p>
