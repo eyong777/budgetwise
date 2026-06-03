@@ -291,6 +291,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     if (!client || !userId || loading || !savingsSchemaReady) return;
     const previous = previousMonth();
     const existing = savings.find((item) => item.month === previous.month && item.year === previous.year);
+    if (!existing) return;
     if (existing?.closed_at) return;
     const manualAmount = existing?.monthly_savings ?? 0;
     void saveSavingsRecord(manualAmount, previous.month, previous.year, true).then(refresh);
