@@ -72,8 +72,8 @@ export default function SavingsPage() {
         <Card>
           <h2 className="mb-4 text-lg font-bold">Current Month Breakdown</h2>
           <div className="grid gap-3">
-            <SummaryLine label="Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} />
-            <SummaryLine label="Leftover Wallet" value={money(stats.leftoverWallet, activeCurrency)} />
+            <SummaryLine label="Mandatory Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} />
+            <SummaryLine label="Available Balance" value={money(stats.leftoverWallet, activeCurrency)} />
             <SummaryLine
               label="Total Saved This Month"
               value={money(stats.totalSavedThisMonth, activeCurrency)}
