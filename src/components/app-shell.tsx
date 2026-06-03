@@ -36,9 +36,12 @@ const links = [
 function ShellInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { profile } = useFinance();
+  const { profile, saveMonthlySavings } = useFinance();
   const stats = useMonthlyStats();
   const [dark, setDark] = useState(false);
+  const [requiredSavings, setRequiredSavings] = useState("");
+  const [savingRequiredSavings, setSavingRequiredSavings] = useState(false);
+  const savingsRequired = stats.walletAmount > 0 && stats.monthlySavings <= 0;
 
   useEffect(() => {
     const stored = localStorage.getItem("budgetwise-theme");
@@ -46,14 +49,6 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     setDark(enabled);
     document.documentElement.classList.toggle("dark", enabled);
   }, []);
-
-  useEffect(() => {
-    if (pathname === "/app/savings" || pathname === "/app/settings") return;
-    if (stats.walletAmount > 0 && stats.monthlySavings <= 0) {
-      toast.error("Set Monthly Savings first before continuing.");
-      router.replace("/app/savings");
-    }
-  }, [pathname, router, stats.monthlySavings, stats.walletAmount]);
 
   function toggleDarkMode() {
     const next = !dark;
@@ -69,6 +64,19 @@ function ShellInner({ children }: { children: React.ReactNode }) {
       localStorage.removeItem("budgetwise-theme");
     }
     router.push("/login");
+  }
+
+  async function submitRequiredSavings(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const amount = Number(requiredSavings);
+    if (!amount || amount <= 0) {
+      toast.error("Monthly Savings is required before continuing.");
+      return;
+    }
+    setSavingRequiredSavings(true);
+    await saveMonthlySavings(amount);
+    setSavingRequiredSavings(false);
+    setRequiredSavings("");
   }
 
   return (
@@ -134,6 +142,38 @@ function ShellInner({ children }: { children: React.ReactNode }) {
           );
         })}
       </nav>
+      {savingsRequired && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-ink/55 px-4 backdrop-blur-sm dark:bg-black/65">
+          <form onSubmit={submitRequiredSavings} className="w-full max-w-md rounded-lg border border-ink/10 bg-white p-6 shadow-soft dark:border-white/10 dark:bg-[#121816]">
+            <div className="mb-5 flex items-start gap-3">
+              <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-mint text-white">
+                <PiggyBank />
+              </span>
+              <div>
+                <h2 className="text-xl font-bold">Monthly Savings Required</h2>
+                <p className="mt-1 text-sm text-ink/60 dark:text-white/60">
+                  You already added wallet money. Enter the amount you want to protect as savings before continuing.
+                </p>
+              </div>
+            </div>
+            <label className="grid gap-2 text-sm font-semibold">
+              Monthly Savings Amount
+              <input
+                value={requiredSavings}
+                onChange={(event) => setRequiredSavings(event.target.value)}
+                type="number"
+                min="0.01"
+                step="0.01"
+                autoFocus
+                className="h-11 rounded-md border border-ink/10 bg-white px-3 text-base outline-none focus:border-mint dark:border-white/10 dark:bg-white/10"
+              />
+            </label>
+            <Button className="mt-5 w-full" disabled={savingRequiredSavings}>
+              {savingRequiredSavings ? "Saving..." : "Save Monthly Savings"}
+            </Button>
+          </form>
+        </div>
+      )}
       <Toaster richColors position="top-right" />
     </div>
   );

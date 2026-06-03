@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ArrowRightLeft, Pencil, Trash2, WalletCards } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -18,7 +17,6 @@ import type { Currency, Wallet } from "@/lib/types";
 type Values = z.infer<typeof walletSchema>;
 
 export default function WalletsPage() {
-  const router = useRouter();
   const { wallets, saveWallet, deleteWallet, transfer, currency } = useFinance();
   const stats = useMonthlyStats();
   const activeCurrency = currency as Currency;
@@ -32,9 +30,6 @@ export default function WalletsPage() {
     await saveWallet({ ...values, id: editing?.id });
     setEditing(null);
     form.reset({ name: "", type: "bank", balance: 0 });
-    if (Number(values.balance) > 0 && stats.monthlySavings <= 0) {
-      router.push("/app/savings");
-    }
   }
 
   return (
