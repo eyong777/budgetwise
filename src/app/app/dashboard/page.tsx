@@ -24,6 +24,21 @@ export default function DashboardPage() {
     ).values()
   );
   const monthlyBudget = currentBudgets.reduce((sum, budget) => sum + Number(budget.limit_amount), 0);
+  const budgetRows = currentBudgets.map((budget) => {
+    const spent = transactions
+      .filter((item) => item.category === budget.category)
+      .filter((item) => {
+        const date = new Date(item.date);
+        return date.getMonth() + 1 === budget.month && date.getFullYear() === budget.year;
+      })
+      .reduce((sum, item) => sum + Number(item.amount), 0);
+    const limit = Number(budget.limit_amount);
+    const remaining = Math.max(0, limit - spent);
+    const usage = limit > 0 ? (spent / limit) * 100 : 0;
+    return { ...budget, spent, limit, remaining, usage, over: spent > limit };
+  });
+  const totalBudgetSpent = budgetRows.reduce((sum, budget) => sum + budget.spent, 0);
+  const overBudgetCount = budgetRows.filter((budget) => budget.over).length;
 
   return (
     <div className="grid gap-6">
@@ -50,41 +65,54 @@ export default function DashboardPage() {
 
       <section>
         <Card>
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-bold">Budget Health</h2>
-              <p className="text-sm text-ink/55 dark:text-white/55">Budgets are spending limits. They do not add money to wallets.</p>
+              <p className="text-sm text-ink/55 dark:text-white/55">Monthly category limits with spending progress.</p>
             </div>
-            <span className="rounded-md bg-mint/10 px-3 py-2 text-sm font-bold text-mint">
-              Budget Left {money(stats.unusedBudget, activeCurrency)}
-            </span>
           </div>
-          <div className="grid gap-4">
-            {currentBudgets.map((budget) => {
-              const spent = transactions
-                .filter((item) => item.category === budget.category)
-                .filter((item) => {
-                  const date = new Date(item.date);
-                  return date.getMonth() + 1 === budget.month && date.getFullYear() === budget.year;
-                })
-                .reduce((sum, item) => sum + Number(item.amount), 0);
-              const remaining = Math.max(0, Number(budget.limit_amount) - spent);
-              const usage = (spent / Number(budget.limit_amount)) * 100;
+
+          <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <BudgetStat label="Monthly Budget" value={money(monthlyBudget, activeCurrency)} />
+            <BudgetStat label="Spent" value={money(totalBudgetSpent, activeCurrency)} tone="red" />
+            <BudgetStat label="Still Available" value={money(stats.unusedBudget, activeCurrency)} tone="green" />
+            <BudgetStat label="Over Budget" value={String(overBudgetCount)} tone={overBudgetCount > 0 ? "red" : "green"} />
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {budgetRows.map((budget) => {
               return (
-                <div key={budget.id} className="grid gap-2">
-                  <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="font-semibold capitalize">{budget.category}</span>
-                    <span className={usage > 100 ? "font-semibold text-coral" : "text-ink/55 dark:text-white/55"}>
-                      {money(spent, activeCurrency)} spent · {money(remaining, activeCurrency)} left
+                <div key={budget.id} className="rounded-md border border-white/55 bg-white/45 p-4 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/[0.06]">
+                  <div className="mb-3 flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-bold capitalize">{budget.category}</p>
+                      <p className="mt-1 text-xs text-ink/50 dark:text-white/50">{budget.month}/{budget.year}</p>
+                    </div>
+                    <span className={budget.over ? "rounded-md bg-coral/10 px-2 py-1 text-xs font-bold text-coral" : "rounded-md bg-mint/10 px-2 py-1 text-xs font-bold text-mint"}>
+                      {budget.over ? "Over" : "Healthy"}
                     </span>
                   </div>
-                  <Progress value={usage} alert={usage > 100} />
+                  <Progress value={budget.usage} alert={budget.over} />
+                  <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                    <div>
+                      <p className="text-ink/45 dark:text-white/45">Limit</p>
+                      <p className="font-bold">{money(budget.limit, activeCurrency)}</p>
+                    </div>
+                    <div>
+                      <p className="text-ink/45 dark:text-white/45">Spent</p>
+                      <p className={budget.over ? "font-bold text-coral" : "font-bold"}>{money(budget.spent, activeCurrency)}</p>
+                    </div>
+                    <div>
+                      <p className="text-ink/45 dark:text-white/45">Left</p>
+                      <p className="font-bold text-mint">{money(budget.remaining, activeCurrency)}</p>
+                    </div>
+                  </div>
                 </div>
               );
             })}
-            {currentBudgets.length === 0 && (
+            {budgetRows.length === 0 && (
               <p className="rounded-md bg-ink/[0.03] p-4 text-sm text-ink/60 dark:bg-white/[0.06] dark:text-white/60">
-                Add budgets for this month to see category progress here.
+                Add budgets to see category progress here.
               </p>
             )}
           </div>
@@ -154,6 +182,15 @@ function MiniMetric({ label, value, tone = "default" }: { label: string; value: 
     <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
       <p className="text-sm text-ink/55 dark:text-white/55">{label}</p>
       <p className={tone === "green" ? "mt-1 text-xl font-black text-mint" : tone === "red" ? "mt-1 text-xl font-black text-coral" : "mt-1 text-xl font-black"}>{value}</p>
+    </div>
+  );
+}
+
+function BudgetStat({ label, value, tone = "default" }: { label: string; value: string; tone?: "default" | "green" | "red" }) {
+  return (
+    <div className="rounded-md border border-white/55 bg-white/45 p-4 backdrop-blur dark:border-white/10 dark:bg-white/[0.06]">
+      <p className="text-xs font-semibold uppercase tracking-wide text-ink/45 dark:text-white/45">{label}</p>
+      <p className={tone === "green" ? "mt-2 text-xl font-black text-mint" : tone === "red" ? "mt-2 text-xl font-black text-coral" : "mt-2 text-xl font-black"}>{value}</p>
     </div>
   );
 }
