@@ -35,11 +35,7 @@ export default function WalletsPage() {
   return (
     <div className="grid gap-6">
       <Card>
-        <div className="grid gap-4 md:grid-cols-3">
-          <div>
-            <p className="text-sm text-ink/55 dark:text-white/55">Money Added to Wallets</p>
-            <p className="mt-1 text-2xl font-black">{money(stats.walletAmount, activeCurrency)}</p>
-          </div>
+        <div className="grid gap-4 md:grid-cols-2">
           <div>
             <p className="text-sm text-ink/55 dark:text-white/55">Monthly Savings + Expenses</p>
             <p className="mt-1 text-2xl font-black text-coral">{money(stats.monthlySavings + stats.monthlyExpenses, activeCurrency)}</p>
@@ -50,7 +46,7 @@ export default function WalletsPage() {
           </div>
         </div>
         <p className="mt-4 rounded-md bg-ink/[0.03] p-3 text-sm text-ink/60 dark:bg-white/[0.06] dark:text-white/60">
-          Wallet cards show money you added to each wallet. The dashboard subtracts monthly savings and expenses to show money left to spend.
+          Wallet cards show each account balance. Monthly savings and expenses are separated so you can clearly see money left to spend.
         </p>
       </Card>
 
