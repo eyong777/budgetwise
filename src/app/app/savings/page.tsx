@@ -42,7 +42,7 @@ export default function SavingsPage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="flex items-center gap-2 text-xl font-bold"><PiggyBank className="text-mint" /> Savings Report</h2>
-            <p className="mt-1 text-sm text-ink/55 dark:text-white/55">Monthly savings and real leftover wallet money are stored as savings. Budget limits only explain spending targets.</p>
+            <p className="mt-1 text-sm text-ink/55 dark:text-white/55">Savings is made from monthly savings, leftover wallet money, and leftover budget money.</p>
           </div>
           <div className="flex w-full flex-wrap items-end gap-2 sm:w-auto">
             <form
@@ -73,7 +73,7 @@ export default function SavingsPage() {
         </div>
         <div className="mt-5 grid gap-3 md:grid-cols-3">
           <GuideTile label="1. Manual Savings" value="The amount you choose to protect first." />
-          <GuideTile label="2. Budget Left" value="A category limit you did not fully use. This explains spending, but does not create money." />
+          <GuideTile label="2. Leftover Budget" value="Budget money you did not use this month." />
           <GuideTile label="3. Leftover Wallet" value="Money still left to spend when the month closes." />
         </div>
       </Card>
@@ -83,41 +83,10 @@ export default function SavingsPage() {
           <h2 className="mb-4 text-lg font-bold">Current Month Breakdown</h2>
           <div className="grid gap-3">
             <SummaryLine label="Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} />
-            <SummaryLine label="Wallet Left After Savings and Expenses" value={money(stats.leftoverWallet, activeCurrency)} />
-            <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                <h3 className="font-bold">Budget Status for {stats.month}/{stats.year}</h3>
-                <span className="rounded-md bg-ink/[0.04] px-2 py-1 text-xs font-semibold text-ink/60 dark:bg-white/[0.08] dark:text-white/60">
-                  Tracking only
-                </span>
-              </div>
-              <div className="grid gap-2">
-                {stats.breakdown.map((item) => {
-                  const overspent = item.spent > item.budgeted;
-                  return (
-                  <div key={item.category} className="grid gap-2 rounded-md bg-ink/[0.03] p-3 text-sm dark:bg-white/[0.06] sm:grid-cols-[1fr_auto] sm:items-center">
-                    <div>
-                      <p className="font-semibold capitalize">{item.category}</p>
-                      <p className="text-ink/55 dark:text-white/55">
-                        Budget {money(item.budgeted, activeCurrency)} · Spent {money(item.spent, activeCurrency)}
-                      </p>
-                    </div>
-                    <span className={overspent ? "font-bold text-coral" : "font-bold text-mint"}>
-                      {overspent ? `${money(item.spent - item.budgeted, activeCurrency)} over` : `${money(item.amount, activeCurrency)} left`}
-                    </span>
-                  </div>
-                  );
-                })}
-                {stats.breakdown.length === 0 && (
-                  <p className="rounded-md bg-ink/[0.03] p-3 text-sm text-ink/60 dark:bg-white/[0.06] dark:text-white/60">
-                    No budgets found for {stats.month}/{stats.year}. Budgets from other months are not included in this current-month calculation.
-                  </p>
-                )}
-              </div>
-            </div>
-            <SummaryLine label="Total Budget Left (Not Added to Savings)" value={money(stats.unusedBudget, activeCurrency)} />
+            <SummaryLine label="Leftover Wallet" value={money(stats.leftoverWallet, activeCurrency)} />
+            <SummaryLine label="Leftover Budget" value={money(stats.unusedBudget, activeCurrency)} />
             <SummaryLine
-              label="Total Saved This Month: Monthly Savings + Wallet Left"
+              label="Total Saved This Month"
               value={money(stats.totalSavedThisMonth, activeCurrency)}
               strong
             />

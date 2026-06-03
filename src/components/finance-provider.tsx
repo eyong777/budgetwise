@@ -140,7 +140,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       .reduce((sum, item) => sum + Number(item.amount), 0);
     const walletAmount = wallets.reduce((sum, wallet) => sum + Number(wallet.balance), 0);
     const leftoverWallet = Math.max(0, walletAmount - Number(manualAmount) - expenses);
-    const totalSaved = Number(manualAmount) + leftoverWallet;
+    const totalSaved = Number(manualAmount) + unusedBudget + leftoverWallet;
     const fullBreakdown = [
       ...breakdown,
       ...(leftoverWallet > 0 ? [{ category: "leftover wallet balance", budgeted: 0, spent: 0, amount: leftoverWallet }] : [])
@@ -514,7 +514,7 @@ export function getMonthlySavingsStats(
     .reduce((sum, item) => sum + Number(item.amount), 0);
   const walletBalance = Math.max(0, walletAmount - monthlySavings - monthlyExpenses);
   const leftoverWallet = currentSavings?.closed_at ? Number(currentSavings.leftover_wallet ?? 0) : walletBalance;
-  const totalSavedThisMonth = monthlySavings + leftoverWallet;
+  const totalSavedThisMonth = monthlySavings + unusedBudget + leftoverWallet;
   const closedSavingsTotal = savings
     .filter((item) => item.closed_at)
     .reduce((sum, item) => sum + Number(item.total_saved), 0);
