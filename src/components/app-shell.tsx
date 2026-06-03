@@ -33,6 +33,9 @@ const links = [
   { href: "/app/settings", label: "Settings", icon: Settings }
 ];
 
+const SESSION_TIMEOUT_MS = 10 * 60 * 1000;
+const LAST_ACTIVITY_KEY = "budgetwise-last-activity";
+
 function ShellInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -58,6 +61,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
   }
 
   async function logout() {
+    localStorage.removeItem(LAST_ACTIVITY_KEY);
     try {
       await createSupabaseBrowserClient().auth.signOut();
     } catch {
@@ -65,6 +69,45 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     }
     router.replace("/login");
   }
+
+  useEffect(() => {
+    let loggingOut = false;
+
+    async function timeoutLogout() {
+      if (loggingOut) return;
+      loggingOut = true;
+      localStorage.removeItem(LAST_ACTIVITY_KEY);
+      try {
+        await createSupabaseBrowserClient().auth.signOut();
+      } catch {
+        // If Supabase is unavailable, still send the user back to login.
+      }
+      router.replace("/login");
+    }
+
+    function markActivity() {
+      localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now()));
+    }
+
+    function checkTimeout() {
+      const lastActivity = Number(localStorage.getItem(LAST_ACTIVITY_KEY) || Date.now());
+      if (Date.now() - lastActivity >= SESSION_TIMEOUT_MS) {
+        void timeoutLogout();
+      }
+    }
+
+    checkTimeout();
+    markActivity();
+
+    const events = ["click", "keydown", "mousemove", "touchstart", "scroll"];
+    events.forEach((eventName) => window.addEventListener(eventName, markActivity, { passive: true }));
+    const interval = window.setInterval(checkTimeout, 30 * 1000);
+
+    return () => {
+      events.forEach((eventName) => window.removeEventListener(eventName, markActivity));
+      window.clearInterval(interval);
+    };
+  }, [router]);
 
   async function submitRequiredSavings(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
