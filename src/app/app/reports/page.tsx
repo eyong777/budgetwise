@@ -65,7 +65,7 @@ export default function ReportsPage() {
       </Card>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <ChartCard title="Budget vs Expenses">
+        <ChartCard title="Assigned vs Activity">
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={monthly}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(120,120,120,.18)" />
@@ -73,8 +73,8 @@ export default function ReportsPage() {
               <YAxis />
               <Tooltip formatter={(value: number) => money(value, activeCurrency)} />
               <Legend />
-              <Bar dataKey="budgeted" fill="#28a86b" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="expenses" fill="#e25555" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="budgeted" name="Assigned" fill="#28a86b" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="expenses" name="Activity" fill="#e25555" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -116,8 +116,8 @@ export default function ReportsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card><p className="text-sm text-ink/55 dark:text-white/55">Total budgeted</p><p className="mt-2 text-2xl font-black text-mint">{money(totals.budgeted, activeCurrency)}</p></Card>
-        <Card><p className="text-sm text-ink/55 dark:text-white/55">Total expenses</p><p className="mt-2 text-2xl font-black text-coral">{money(totals.expenses, activeCurrency)}</p></Card>
+        <Card><p className="text-sm text-ink/55 dark:text-white/55">Total assigned</p><p className="mt-2 text-2xl font-black text-mint">{money(totals.budgeted, activeCurrency)}</p></Card>
+        <Card><p className="text-sm text-ink/55 dark:text-white/55">Total activity</p><p className="mt-2 text-2xl font-black text-coral">{money(totals.expenses, activeCurrency)}</p></Card>
         <Card><p className="text-sm text-ink/55 dark:text-white/55">Total saved</p><p className="mt-2 text-2xl font-black">{money(totals.saved, activeCurrency)}</p></Card>
       </div>
     </div>
