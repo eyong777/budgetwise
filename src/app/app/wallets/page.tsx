@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ArrowRightLeft, Pencil, Trash2, WalletCards } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -17,6 +18,7 @@ import type { Currency, Wallet } from "@/lib/types";
 type Values = z.infer<typeof walletSchema>;
 
 export default function WalletsPage() {
+  const router = useRouter();
   const { wallets, saveWallet, deleteWallet, transfer, currency } = useFinance();
   const stats = useMonthlyStats();
   const activeCurrency = currency as Currency;
@@ -30,6 +32,9 @@ export default function WalletsPage() {
     await saveWallet({ ...values, id: editing?.id });
     setEditing(null);
     form.reset({ name: "", type: "bank", balance: 0 });
+    if (Number(values.balance) > 0 && stats.monthlySavings <= 0) {
+      router.push("/app/savings");
+    }
   }
 
   return (
@@ -53,7 +58,8 @@ export default function WalletsPage() {
       <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
       <div className="grid gap-6">
         <Card>
-          <h2 className="mb-4 flex items-center gap-2 text-lg font-bold"><WalletCards size={20} /> {editing ? "Edit wallet" : "Add wallet money"}</h2>
+          <h2 className="flex items-center gap-2 text-lg font-bold"><WalletCards size={20} /> {editing ? "Edit wallet" : "Add wallet money"}</h2>
+          <p className="mb-4 mt-1 text-sm text-ink/55 dark:text-white/55">After adding wallet money, set Monthly Savings before continuing.</p>
           <form onSubmit={form.handleSubmit(submit)} className="grid gap-4">
             <Field label="Wallet name" {...form.register("name")} />
             <SelectField label="Type" {...form.register("type")}>

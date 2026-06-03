@@ -71,6 +71,11 @@ export default function SavingsPage() {
             </Button>
           </div>
         </div>
+        {stats.monthlySavings <= 0 && (
+          <div className="mt-5 rounded-md bg-mint/10 p-4 text-sm font-semibold text-mint">
+            Monthly Savings is required after adding wallet money. Enter the amount you want to protect, then click Save.
+          </div>
+        )}
         <div className="mt-5 grid gap-3 md:grid-cols-3">
           <GuideTile label="1. Manual Savings" value="The amount you choose to protect first." />
           <GuideTile label="2. Budget Left" value="Budget limit you did not use. This is not added to savings." />
