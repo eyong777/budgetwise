@@ -14,3 +14,54 @@ body {
 ::selection {
   background: rgba(40, 168, 107, 0.22);
 }
+
+.print-report table th,
+.print-report table td {
+  border-bottom: 1px solid rgba(23, 32, 26, 0.12);
+  padding: 0.7rem 0.6rem;
+  vertical-align: top;
+}
+
+.print-report table th {
+  color: rgba(23, 32, 26, 0.62);
+  font-weight: 800;
+  text-align: left;
+}
+
+.print-report table .text-right {
+  text-align: right;
+}
+
+@media print {
+  body {
+    background: white !important;
+  }
+
+  .no-print,
+  aside,
+  header,
+  nav {
+    display: none !important;
+  }
+
+  main,
+  main > div {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+
+  .print-report {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: white !important;
+    color: #17201a !important;
+    padding: 0 !important;
+  }
+
+  .print-report * {
+    color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
