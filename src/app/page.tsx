@@ -14,8 +14,8 @@ export default function LandingPage() {
   return (
     <main className="bg-paper text-ink dark:bg-[#101412] dark:text-white">
       <section className="relative min-h-[86vh] overflow-hidden border-b border-ink/10 dark:border-white/10">
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(40,168,107,0.16),transparent_42%),url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1800&q=80')] bg-cover bg-center" />
-        <div className="absolute inset-0 bg-paper/82 dark:bg-[#101412]/78" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(247,248,244,0.90),rgba(247,248,244,0.62)_42%,rgba(16,20,18,0.26)),url('/budgetwise-hero.jpg')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-paper/20 dark:bg-[#101412]/45" />
         <div className="relative mx-auto flex min-h-[86vh] max-w-7xl flex-col px-4 py-6 sm:px-6">
           <header className="flex items-center justify-between">
             <div className="flex items-center gap-3">
