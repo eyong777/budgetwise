@@ -17,12 +17,8 @@ type AuthMode = "login" | "register" | "forgot";
 type AuthValues = z.infer<typeof authSchema>;
 
 const loginPhotos = [
-  "/login-photos/login-photo-1.jpg",
-  "/login-photos/login-photo-2.jpg",
-  "/login-photos/login-photo-3.jpg",
-  "/login-photos/login-photo-4.jpg",
-  "/login-photos/login-photo-5.jpg",
-  "/login-photos/login-photo-6.jpg"
+  "/login-photos/login-main.jpg",
+  "/login-photos/login-secondary.jpg"
 ];
 
 export function AuthForm({ mode }: { mode: AuthMode }) {
@@ -97,53 +93,35 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-3 gap-3 lg:hidden">
-            {loginPhotos.slice(0, 6).map((photo, index) => (
-              <img
-                key={photo}
-                src={photo}
-                alt=""
-                className={`h-28 w-full rounded-lg object-cover shadow-soft ${index === 0 ? "col-span-2 h-40" : ""}`}
-              />
-            ))}
-          </div>
-
-          <div className="absolute right-0 top-12 hidden h-[570px] w-[540px] lg:block">
+          <div className="mt-8 grid gap-3 sm:grid-cols-[1fr_0.72fr] lg:hidden">
             <img
               src={loginPhotos[0]}
               alt=""
-              className="absolute right-8 top-12 h-80 w-64 rounded-lg object-cover shadow-soft"
+              className="h-56 w-full rounded-lg object-cover object-[center_70%] shadow-soft"
             />
             <img
               src={loginPhotos[1]}
               alt=""
-              className="absolute left-10 top-36 h-44 w-56 rounded-lg object-cover shadow-soft"
+              className="h-56 w-full rounded-lg object-cover object-[center_72%] shadow-soft"
+            />
+          </div>
+
+          <div className="absolute right-0 top-10 hidden h-[590px] w-[540px] lg:block">
+            <img
+              src={loginPhotos[0]}
+              alt=""
+              className="absolute right-4 top-0 h-[500px] w-[340px] rounded-lg object-cover object-[center_72%] shadow-soft"
             />
             <img
-              src={loginPhotos[2]}
+              src={loginPhotos[1]}
               alt=""
-              className="absolute bottom-20 left-28 h-44 w-52 rounded-lg object-cover shadow-soft"
+              className="absolute bottom-8 left-4 h-64 w-72 rounded-lg border-4 border-paper object-cover object-[center_72%] shadow-soft dark:border-[#101412]"
             />
-            <img
-              src={loginPhotos[3]}
-              alt=""
-              className="absolute bottom-4 right-16 h-32 w-32 rounded-full border-4 border-white object-cover shadow-soft dark:border-[#101412]"
-            />
-            <img
-              src={loginPhotos[4]}
-              alt=""
-              className="absolute right-0 top-0 h-28 w-36 rounded-lg object-cover shadow-soft"
-            />
-            <img
-              src={loginPhotos[5]}
-              alt=""
-              className="absolute bottom-0 left-0 h-28 w-40 rounded-lg object-cover shadow-soft"
-            />
-            <div className="absolute right-0 top-52 grid size-16 place-items-center rounded-full bg-coral text-3xl text-white shadow-soft">
+            <div className="absolute right-0 top-80 grid size-16 place-items-center rounded-full bg-coral text-white shadow-soft">
               <Heart fill="currentColor" />
             </div>
-            <div className="absolute left-0 top-20 rounded-full bg-[#f6c64f] px-3 py-2 text-2xl shadow-soft">
-              :)
+            <div className="absolute left-14 top-24 rounded-lg bg-white px-4 py-3 text-sm font-bold shadow-soft dark:bg-[#18201c]">
+              Memories worth budgeting for
             </div>
           </div>
         </div>
