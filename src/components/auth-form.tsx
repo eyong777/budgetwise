@@ -81,15 +81,15 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   return (
     <div className="min-h-screen bg-paper px-4 py-8 text-ink dark:bg-[#101412] dark:text-white">
       <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-8 lg:grid-cols-[1fr_440px]">
-        <div className="relative hidden min-h-[650px] overflow-hidden lg:block">
+        <div className="relative min-h-[470px] overflow-hidden lg:min-h-[650px]">
           <Link href="/" className="relative z-10 flex items-center gap-3">
             <span className="grid size-12 place-items-center rounded-lg bg-mint text-white">
               <PiggyBank />
             </span>
             <span className="text-2xl font-bold">BudgetWise</span>
           </Link>
-          <div className="absolute left-0 top-36 z-10 max-w-[350px]">
-            <h1 className="text-6xl font-black leading-tight">
+          <div className="relative z-10 mt-12 max-w-[350px] lg:absolute lg:left-0 lg:top-36 lg:mt-0">
+            <h1 className="text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
               Build the life <span className="text-mint">you love.</span>
             </h1>
             <p className="mt-5 text-lg leading-8 text-ink/65 dark:text-white/65">
@@ -97,7 +97,18 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             </p>
           </div>
 
-          <div className="absolute right-0 top-12 h-[570px] w-[540px]">
+          <div className="mt-8 grid grid-cols-3 gap-3 lg:hidden">
+            {loginPhotos.slice(0, 6).map((photo, index) => (
+              <img
+                key={photo}
+                src={photo}
+                alt=""
+                className={`h-28 w-full rounded-lg object-cover shadow-soft ${index === 0 ? "col-span-2 h-40" : ""}`}
+              />
+            ))}
+          </div>
+
+          <div className="absolute right-0 top-12 hidden h-[570px] w-[540px] lg:block">
             <img
               src={loginPhotos[0]}
               alt=""
@@ -139,10 +150,6 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
         <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="rounded-lg border border-ink/10 bg-white p-6 shadow-soft dark:border-white/10 dark:bg-white/[0.06]">
           <div className="mb-6">
-            <Link href="/" className="mb-5 flex items-center gap-2 lg:hidden">
-              <PiggyBank className="text-mint" />
-              <span className="font-bold">BudgetWise</span>
-            </Link>
             <h2 className="text-2xl font-bold">{isForgot ? "Reset password" : isRegister ? "Create account" : "Log in"}</h2>
             <p className="mt-1 text-sm text-ink/55 dark:text-white/55">
               {isForgot ? "We will email you a recovery link." : "Use your email and password to continue."}
