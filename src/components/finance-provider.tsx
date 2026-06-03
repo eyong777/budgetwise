@@ -107,7 +107,11 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const [savingsSchemaReady, setSavingsSchemaReady] = useState(true);
 
   const calculateBreakdown = useCallback((month: number, year: number): BreakdownItem[] => {
-    return expenseCategories
+    const categories = Array.from(
+      new Set(budgets.filter((budget) => budget.month === month && budget.year === year).map((budget) => budget.category))
+    );
+
+    return categories
       .map((category) => {
         const budgeted = budgets
           .filter((budget) => budget.category === category && budget.month === month && budget.year === year)
@@ -117,7 +121,15 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
           .reduce((sum, item) => sum + Number(item.amount), 0);
         return { category, budgeted, spent, amount: Math.max(0, budgeted - spent) };
       })
-      .filter((item) => item.budgeted > 0 || item.amount > 0);
+      .filter((item) => item.budgeted > 0)
+      .sort((a, b) => {
+        const aIndex = expenseCategories.indexOf(a.category as (typeof expenseCategories)[number]);
+        const bIndex = expenseCategories.indexOf(b.category as (typeof expenseCategories)[number]);
+        if (aIndex === -1 && bIndex === -1) return a.category.localeCompare(b.category);
+        if (aIndex === -1) return 1;
+        if (bIndex === -1) return -1;
+        return aIndex - bIndex;
+      });
   }, [budgets, transactions]);
 
   const saveSavingsRecord = useCallback(async (manualAmount: number, month: number, year: number, close = false) => {
@@ -474,7 +486,10 @@ export function getMonthlySavingsStats(
   const walletAmount = wallets.reduce((sum, wallet) => sum + Number(wallet.balance), 0);
   const currentSavings = savings.find((item) => item.month === month && item.year === year);
   const monthlySavings = Number(currentSavings?.monthly_savings ?? 0);
-  const breakdown = expenseCategories
+  const budgetCategories = Array.from(
+    new Set(budgets.filter((budget) => budget.month === month && budget.year === year).map((budget) => budget.category))
+  );
+  const breakdown = budgetCategories
     .map((category) => {
       const budgeted = budgets
         .filter((budget) => budget.category === category && budget.month === month && budget.year === year)
@@ -484,7 +499,15 @@ export function getMonthlySavingsStats(
         .reduce((sum, item) => sum + Number(item.amount), 0);
       return { category, budgeted, spent, amount: Math.max(0, budgeted - spent) };
     })
-    .filter((item) => item.budgeted > 0 || item.amount > 0);
+    .filter((item) => item.budgeted > 0)
+    .sort((a, b) => {
+      const aIndex = expenseCategories.indexOf(a.category as (typeof expenseCategories)[number]);
+      const bIndex = expenseCategories.indexOf(b.category as (typeof expenseCategories)[number]);
+      if (aIndex === -1 && bIndex === -1) return a.category.localeCompare(b.category);
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    });
   const unusedBudget = breakdown.reduce((sum, item) => sum + item.amount, 0);
   const monthlyExpenses = transactions
     .filter((item) => sameMonth(item.date, month, year))

@@ -83,20 +83,44 @@ export default function SavingsPage() {
           <h2 className="mb-4 text-lg font-bold">Current Month Breakdown</h2>
           <div className="grid gap-3">
             <SummaryLine label="Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} />
-            <SummaryLine label="Leftover Wallet Balance" value={money(stats.leftoverWallet, activeCurrency)} />
+            <SummaryLine label="Wallet Left After Savings and Expenses" value={money(stats.leftoverWallet, activeCurrency)} />
             <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
-              <h3 className="mb-3 font-bold">Budget Left Breakdown</h3>
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <h3 className="font-bold">Budget Status for {stats.month}/{stats.year}</h3>
+                <span className="rounded-md bg-ink/[0.04] px-2 py-1 text-xs font-semibold text-ink/60 dark:bg-white/[0.08] dark:text-white/60">
+                  Tracking only
+                </span>
+              </div>
               <div className="grid gap-2">
-                {stats.breakdown.map((item) => (
-                  <div key={item.category} className="flex justify-between text-sm">
-                    <span className="capitalize">{item.category}</span>
-                    <span className="font-semibold">{money(item.amount, activeCurrency)}</span>
+                {stats.breakdown.map((item) => {
+                  const overspent = item.spent > item.budgeted;
+                  return (
+                  <div key={item.category} className="grid gap-2 rounded-md bg-ink/[0.03] p-3 text-sm dark:bg-white/[0.06] sm:grid-cols-[1fr_auto] sm:items-center">
+                    <div>
+                      <p className="font-semibold capitalize">{item.category}</p>
+                      <p className="text-ink/55 dark:text-white/55">
+                        Budget {money(item.budgeted, activeCurrency)} · Spent {money(item.spent, activeCurrency)}
+                      </p>
+                    </div>
+                    <span className={overspent ? "font-bold text-coral" : "font-bold text-mint"}>
+                      {overspent ? `${money(item.spent - item.budgeted, activeCurrency)} over` : `${money(item.amount, activeCurrency)} left`}
+                    </span>
                   </div>
-                ))}
+                  );
+                })}
+                {stats.breakdown.length === 0 && (
+                  <p className="rounded-md bg-ink/[0.03] p-3 text-sm text-ink/60 dark:bg-white/[0.06] dark:text-white/60">
+                    No budgets found for {stats.month}/{stats.year}. Budgets from other months are not included in this current-month calculation.
+                  </p>
+                )}
               </div>
             </div>
-            <SummaryLine label="Total Budget Left" value={money(stats.unusedBudget, activeCurrency)} />
-            <SummaryLine label="Total Saved This Month" value={money(stats.totalSavedThisMonth, activeCurrency)} strong />
+            <SummaryLine label="Total Budget Left (Not Added to Savings)" value={money(stats.unusedBudget, activeCurrency)} />
+            <SummaryLine
+              label="Total Saved This Month: Monthly Savings + Wallet Left"
+              value={money(stats.totalSavedThisMonth, activeCurrency)}
+              strong
+            />
             <Button onClick={() => closeMonth(stats.month, stats.year)}>Close Current Month</Button>
           </div>
         </Card>
