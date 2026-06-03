@@ -123,7 +123,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
             {!isRegister && !isForgot && <Link href="/forgot-password" className="font-semibold text-mint">Forgot password?</Link>}
             <Link href={isRegister ? "/login" : "/register"} className="font-semibold text-ink/70 dark:text-white/70">
-              {isRegister ? "Already have an account?" : "New to BudgetWise?"}
+              {isRegister ? "Already have an account? Log in" : "Create account"}
             </Link>
           </div>
         </form>

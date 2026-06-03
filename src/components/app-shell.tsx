@@ -70,7 +70,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
             <PiggyBank />
           </span>
           <span>
-            <span className="block text-lg font-bold">Tipid ta noy</span>
+            <span className="block text-lg font-bold">BudgetWise</span>
             <span className="text-xs text-ink/50 dark:text-white/50">Personal finance OS</span>
           </span>
         </Link>
