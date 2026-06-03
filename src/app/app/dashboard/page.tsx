@@ -1,16 +1,14 @@
 "use client";
 
-import { AlertTriangle, ArrowDownRight, Lightbulb, PiggyBank, Wallet } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AlertTriangle, ArrowDownRight, Lightbulb, Wallet } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Field } from "@/components/ui/field";
 import { Progress } from "@/components/ui/progress";
 import { useFinance, useMonthlyStats } from "@/components/finance-provider";
 import { money } from "@/lib/utils";
 import type { Currency } from "@/lib/types";
 
 export default function DashboardPage() {
-  const { transactions, budgets, currency, saveMonthlySavings } = useFinance();
+  const { transactions, budgets, currency } = useFinance();
   const activeCurrency = currency as Currency;
   const stats = useMonthlyStats();
   const latest = transactions.slice(0, 5);
@@ -50,7 +48,7 @@ export default function DashboardPage() {
 
   return (
     <div className="grid gap-6">
-      <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+      <section>
         <Card className="overflow-hidden p-0">
           <div className="bg-ink p-6 text-white dark:bg-white dark:text-ink">
             <div className="flex items-start justify-between gap-4">
@@ -69,34 +67,6 @@ export default function DashboardPage() {
           <div className="grid gap-3 p-4 sm:grid-cols-2">
             <MiniMetric label="Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} tone="green" />
             <MiniMetric label="Expenses This Month" value={money(stats.monthlyExpenses, activeCurrency)} tone="red" />
-          </div>
-        </Card>
-
-        <Card>
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-bold">Savings Plan</h2>
-              <p className="text-sm text-ink/55 dark:text-white/55">Set aside money before spending.</p>
-            </div>
-            <PiggyBank className="text-mint" />
-          </div>
-          <form
-            className="mb-5 flex gap-2"
-            onSubmit={(event) => {
-              event.preventDefault();
-              const form = new FormData(event.currentTarget);
-              void saveMonthlySavings(Number(form.get("monthly_savings") || 0));
-            }}
-          >
-            <Field label="Monthly Savings" name="monthly_savings" type="number" step="0.01" defaultValue={stats.monthlySavings} />
-            <Button className="mt-6">Save</Button>
-          </form>
-          <div className="rounded-md bg-mint/10 p-4">
-            <p className="text-sm text-ink/60 dark:text-white/60">Total Saved This Month</p>
-            <p className="mt-1 text-3xl font-black text-mint">{money(stats.totalSavedThisMonth, activeCurrency)}</p>
-            <p className="mt-2 text-sm text-ink/55 dark:text-white/55">
-              Monthly savings plus real wallet money left after expenses.
-            </p>
           </div>
         </Card>
       </section>

@@ -4,7 +4,6 @@ import { PiggyBank, Trash2 } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Field } from "@/components/ui/field";
 import { useFinance, useMonthlyStats } from "@/components/finance-provider";
 import { money } from "@/lib/utils";
 import type { Currency } from "@/lib/types";
@@ -14,7 +13,6 @@ export default function SavingsPage() {
     currency,
     savings,
     savingsBreakdowns,
-    saveMonthlySavings,
     deleteSavingsMonth,
     clearSavingsHistory,
     closeMonth
@@ -45,21 +43,9 @@ export default function SavingsPage() {
             <p className="mt-1 text-sm text-ink/55 dark:text-white/55">Savings is made from monthly savings and real wallet money left after expenses. Budget left is only a limit check.</p>
           </div>
           <div className="flex w-full flex-wrap items-end gap-2 sm:w-auto">
-            <form
-              className="flex gap-2"
-              onSubmit={(event) => {
-                event.preventDefault();
-                const form = new FormData(event.currentTarget);
-                void saveMonthlySavings(Number(form.get("monthly_savings") || 0));
-              }}
-            >
-              <Field label="Monthly Savings" name="monthly_savings" type="number" step="0.01" defaultValue={stats.monthlySavings} />
-              <Button className="mt-6">Save</Button>
-            </form>
             <Button
               type="button"
               variant="danger"
-              className="mt-6"
               onClick={() => {
                 if (window.confirm("Delete all savings test data and breakdowns?")) {
                   void clearSavingsHistory();
@@ -73,7 +59,7 @@ export default function SavingsPage() {
         </div>
         {stats.monthlySavings <= 0 && (
           <div className="mt-5 rounded-md bg-mint/10 p-4 text-sm font-semibold text-mint">
-            Monthly Savings is required after adding wallet money. Enter the amount you want to protect, then click Save.
+            Monthly Savings is required after adding wallet money. The app will ask for it automatically.
           </div>
         )}
         <div className="mt-5 grid gap-3 md:grid-cols-3">
