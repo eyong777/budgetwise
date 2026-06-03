@@ -32,8 +32,8 @@ export default function DashboardPage() {
       ? "Money left to spend is zero because savings and expenses used the wallet money."
       : "Money left to spend is wallet money minus monthly savings and expenses.",
     stats.unusedBudget > 0
-      ? `${money(stats.unusedBudget, activeCurrency)} is leftover budget that counts toward savings this month.`
-      : "Leftover budget will appear here when spending stays below budget limits.",
+      ? `${money(stats.unusedBudget, activeCurrency)} is budget limit left. It is not added to saved money.`
+      : "Budget left will appear here when spending stays below budget limits.",
     stats.leftoverWallet > 0
       ? `${money(stats.leftoverWallet, activeCurrency)} left in the wallet will also move to savings at month close.`
       : "Leftover wallet money will show here when the month has spendable balance left.",
@@ -87,7 +87,7 @@ export default function DashboardPage() {
             <p className="text-sm text-ink/60 dark:text-white/60">Total Saved This Month</p>
             <p className="mt-1 text-3xl font-black text-mint">{money(stats.totalSavedThisMonth, activeCurrency)}</p>
             <p className="mt-2 text-sm text-ink/55 dark:text-white/55">
-              Monthly savings plus leftover wallet and leftover budget money.
+              Monthly savings plus real wallet money left after expenses.
             </p>
           </div>
         </Card>

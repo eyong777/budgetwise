@@ -42,7 +42,7 @@ export default function SavingsPage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="flex items-center gap-2 text-xl font-bold"><PiggyBank className="text-mint" /> Savings Report</h2>
-            <p className="mt-1 text-sm text-ink/55 dark:text-white/55">Savings is made from monthly savings, leftover wallet money, and leftover budget money.</p>
+            <p className="mt-1 text-sm text-ink/55 dark:text-white/55">Savings is made from monthly savings and real wallet money left after expenses. Budget left is only a limit check.</p>
           </div>
           <div className="flex w-full flex-wrap items-end gap-2 sm:w-auto">
             <form
@@ -73,7 +73,7 @@ export default function SavingsPage() {
         </div>
         <div className="mt-5 grid gap-3 md:grid-cols-3">
           <GuideTile label="1. Manual Savings" value="The amount you choose to protect first." />
-          <GuideTile label="2. Leftover Budget" value="Budget money you did not use this month." />
+          <GuideTile label="2. Budget Left" value="Budget limit you did not use. This is not added to savings." />
           <GuideTile label="3. Leftover Wallet" value="Money still left to spend when the month closes." />
         </div>
       </Card>
@@ -84,7 +84,7 @@ export default function SavingsPage() {
           <div className="grid gap-3">
             <SummaryLine label="Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} />
             <SummaryLine label="Leftover Wallet" value={money(stats.leftoverWallet, activeCurrency)} />
-            <SummaryLine label="Leftover Budget" value={money(stats.unusedBudget, activeCurrency)} />
+            <SummaryLine label="Budget Left (Limit Only)" value={money(stats.unusedBudget, activeCurrency)} />
             <SummaryLine
               label="Total Saved This Month"
               value={money(stats.totalSavedThisMonth, activeCurrency)}
