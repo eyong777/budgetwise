@@ -38,7 +38,7 @@ export default function BudgetsPage() {
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[360px_1fr]">
+    <div className="grid gap-6 xl:grid-cols-[430px_1fr]">
       <Card>
         <h2 className="mb-4 text-lg font-bold">{editing ? "Edit budget" : "Create monthly budget"}</h2>
         <form onSubmit={form.handleSubmit(submit)} className="grid gap-4">
@@ -46,7 +46,7 @@ export default function BudgetsPage() {
             {expenseCategories.map((item) => <option key={item} value={item}>{item}</option>)}
           </SelectField>
           <Field label="Limit amount" type="number" step="0.01" {...form.register("limit_amount")} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Month" type="number" className="min-w-0 w-full" {...form.register("month")} />
             <Field label="Year" type="number" className="min-w-0 w-full" {...form.register("year")} />
           </div>
