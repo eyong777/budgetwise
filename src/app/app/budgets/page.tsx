@@ -67,7 +67,21 @@ export default function BudgetsPage() {
                   <h2 className="text-xl font-bold capitalize">{budget.category}</h2>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="secondary" className="size-9 px-0" onClick={() => { setEditing(budget); form.reset(budget); }}><Pencil size={16} /></Button>
+                  <Button
+                    variant="secondary"
+                    className="size-9 px-0"
+                    onClick={() => {
+                      setEditing(budget);
+                      form.reset({
+                        category: budget.category as Values["category"],
+                        limit_amount: Number(budget.limit_amount),
+                        month: Number(budget.month),
+                        year: Number(budget.year)
+                      });
+                    }}
+                  >
+                    <Pencil size={16} />
+                  </Button>
                   <Button variant="danger" className="size-9 px-0" onClick={() => deleteBudget(budget.id)}><Trash2 size={16} /></Button>
                 </div>
               </div>

@@ -12,7 +12,7 @@ import { useFinance } from "@/components/finance-provider";
 import { expenseCategories, frequencies } from "@/lib/constants";
 import { money } from "@/lib/utils";
 import { recurringSchema } from "@/lib/validations";
-import type { Currency, RecurringTransaction } from "@/lib/types";
+import type { Currency, Frequency, RecurringTransaction } from "@/lib/types";
 
 type Values = z.infer<typeof recurringSchema>;
 
@@ -26,7 +26,7 @@ export default function RecurringPage() {
   });
 
   async function submit(values: Values) {
-    await saveRecurring({ ...values, id: editing?.id, type: "expense" });
+    await saveRecurring({ ...values, frequency: values.frequency as Frequency, id: editing?.id, type: "expense" });
     setEditing(null);
     form.reset({ amount: 0, category: "bills", wallet_id: wallets[0]?.id ?? "", description: "", frequency: "monthly", next_run: new Date().toISOString().slice(0, 10) });
   }

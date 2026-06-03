@@ -325,8 +325,14 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     transfer: async (fromId, toId, amount) => {
       const from = wallets.find((wallet) => wallet.id === fromId);
       const to = wallets.find((wallet) => wallet.id === toId);
-      if (!from || !to || amount <= 0) return toast.error("Choose wallets and a valid amount.");
-      if (!client || !userId) return toast.info("Transfers save after Supabase is connected.");
+      if (!from || !to || amount <= 0) {
+        toast.error("Choose wallets and a valid amount.");
+        return;
+      }
+      if (!client || !userId) {
+        toast.info("Transfers save after Supabase is connected.");
+        return;
+      }
       const { error } = await client.from("wallets").upsert([
         { ...from, balance: Number(from.balance) - amount, user_id: userId },
         { ...to, balance: Number(to.balance) + amount, user_id: userId }
@@ -335,7 +341,10 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       await refresh();
     },
     saveTransaction: async (transaction) => {
-      if (!client || !userId) return toast.info("Connect Supabase to save live data. Demo data is active.");
+      if (!client || !userId) {
+        toast.info("Connect Supabase to save live data. Demo data is active.");
+        return;
+      }
       const stats = getMonthlySavingsStats(wallets, transactions, budgets, savings, savingsBreakdowns);
       const previous = transaction.id ? transactions.find((item) => item.id === transaction.id) : null;
       const previousEffect = previous ? Number(previous.amount) : 0;
@@ -358,7 +367,6 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     },
     deleteTransaction: async (id) => {
       if (!client) return;
-      const previous = transactions.find((item) => item.id === id);
       const { error } = await client.from("transactions").delete().eq("id", id);
       if (error) {
         toast.error(error.message);
