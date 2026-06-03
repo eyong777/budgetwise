@@ -195,8 +195,6 @@ export default function DashboardPage() {
 }
 
 function SavingsBreakdown({ stats, currency }: { stats: ReturnType<typeof useMonthlyStats>; currency: Currency }) {
-  const visibleBreakdown = stats.breakdown.filter((item) => item.amount > 0);
-
   return (
     <div className="grid gap-4">
       <div className="grid gap-3 sm:grid-cols-3">
@@ -211,22 +209,6 @@ function SavingsBreakdown({ stats, currency }: { stats: ReturnType<typeof useMon
         <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
           <p className="text-sm text-ink/60 dark:text-white/60">Leftover Wallet</p>
           <p className="mt-1 text-xl font-black">{money(stats.leftoverWallet, currency)}</p>
-        </div>
-      </div>
-      <div>
-        <h3 className="mb-3 font-bold">Budget Left by Category</h3>
-        <div className="grid gap-2">
-          {visibleBreakdown.map((item) => (
-            <div key={item.category} className="flex items-center justify-between rounded-md bg-ink/[0.03] p-3 text-sm dark:bg-white/[0.06]">
-              <span className="capitalize">{item.category}</span>
-              <span className="font-bold">{money(item.amount, currency)}</span>
-            </div>
-          ))}
-          {visibleBreakdown.length === 0 && (
-            <p className="rounded-md bg-ink/[0.03] p-3 text-sm text-ink/55 dark:bg-white/[0.06] dark:text-white/55">
-              Budget left will show here when spending stays below a category limit.
-            </p>
-          )}
         </div>
       </div>
       <div className="rounded-md bg-mint/10 p-4">
