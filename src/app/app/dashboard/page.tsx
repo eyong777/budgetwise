@@ -15,8 +15,7 @@ export default function DashboardPage() {
   const stats = useMonthlyStats();
   const latest = transactions.slice(0, 5);
   const currentBudgets = budgets
-    .filter((budget) => budget.month === stats.month && budget.year === stats.year)
-    .slice(0, 6);
+    .filter((budget) => budget.month === stats.month && budget.year === stats.year);
   const overspent = currentBudgets.filter((budget) => {
     const spent = transactions
       .filter((item) => item.category === budget.category)
