@@ -61,13 +61,13 @@ export default function SavingsPage() {
               variant="danger"
               className="mt-6"
               onClick={() => {
-                if (window.confirm("Delete all savings history and breakdowns?")) {
+                if (window.confirm("Delete all savings test data and breakdowns?")) {
                   void clearSavingsHistory();
                 }
               }}
             >
               <Trash2 size={16} />
-              Clear All
+              Delete All Test Savings
             </Button>
           </div>
         </div>

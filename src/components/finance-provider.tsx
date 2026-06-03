@@ -443,6 +443,8 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         toast.error(breakdownError?.message || error?.message || "Could not clear savings history.");
         return;
       }
+      setSavings([]);
+      setSavingsBreakdowns([]);
       toast.success("Savings history cleared");
       await refresh();
     },
