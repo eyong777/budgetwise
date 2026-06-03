@@ -92,6 +92,13 @@ function sameMonth(dateText: string, month: number, year: number) {
   return date.getMonth() + 1 === month && date.getFullYear() === year;
 }
 
+function monthDateRange(month: number, year: number) {
+  const start = `${year}-${String(month).padStart(2, "0")}-01`;
+  const next = new Date(year, month, 1);
+  const end = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, "0")}-01`;
+  return { start, end };
+}
+
 export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -458,8 +465,17 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       await copyBudgetsToNextMonth(month, year);
       if (client && wallets.length) {
         await Promise.all(wallets.map((wallet) => client.from("wallets").update({ balance: 0 }).eq("id", wallet.id)));
+        const range = monthDateRange(month, year);
+        await client
+          .from("transactions")
+          .delete()
+          .eq("user_id", userId)
+          .eq("type", "expense")
+          .gte("date", range.start)
+          .lt("date", range.end);
       } else {
         setWallets((current) => current.map((wallet) => ({ ...wallet, balance: 0 })));
+        setTransactions((current) => current.filter((item) => !sameMonth(item.date, month, year)));
       }
       toast.success("Leftover wallet money moved into savings");
       await refresh();
@@ -497,7 +513,7 @@ export function getMonthlySavingsStats(
 ) {
   const { month, year } = monthKey();
   const walletAmount = wallets.reduce((sum, wallet) => sum + Number(wallet.balance), 0);
-  const currentSavings = savings.find((item) => item.month === month && item.year === year);
+  const currentSavings = savings.find((item) => item.month === month && item.year === year && !item.closed_at);
   const monthlySavings = Number(currentSavings?.monthly_savings ?? 0);
   const budgetCategories = Array.from(
     new Set(budgets.filter((budget) => budget.month === month && budget.year === year).map((budget) => budget.category))
