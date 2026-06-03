@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Heart, PiggyBank } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import type { FieldErrors } from "react-hook-form";
 import { toast, Toaster } from "sonner";
@@ -26,9 +26,6 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
   const isRegister = mode === "register";
   const isForgot = mode === "forgot";
-  const [pendingOtpEmail, setPendingOtpEmail] = useState("");
-  const [otpCode, setOtpCode] = useState("");
-  const [verifyingOtp, setVerifyingOtp] = useState(false);
   const schema = isForgot
     ? authSchema.pick({ email: true })
     : isRegister
@@ -77,63 +74,20 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       return;
     }
 
-    if (isRegister) {
-      const { error } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: { data: { full_name: values.fullName } }
-      });
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-
-      setPendingOtpEmail(values.email);
-      toast.success("OTP sent. Check your email.");
-      return;
-    }
-
-    const result = await supabase.auth.signInWithPassword({ email: values.email, password: values.password });
+    const result = isRegister
+      ? await supabase.auth.signUp({
+          email: values.email,
+          password: values.password,
+          options: { data: { full_name: values.fullName } }
+        })
+      : await supabase.auth.signInWithPassword({ email: values.email, password: values.password });
 
     if (result.error) {
       toast.error(result.error.message);
       return;
     }
 
-    toast.success("Logged in");
-    router.replace("/app/dashboard");
-  }
-
-  async function verifyRegistrationOtp(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!pendingOtpEmail || otpCode.trim().length < 6) {
-      toast.error("Enter the OTP code from your email.");
-      return;
-    }
-
-    let supabase;
-    try {
-      supabase = createSupabaseBrowserClient();
-    } catch {
-      toast.error("Add Supabase environment variables to enable authentication.");
-      return;
-    }
-
-    setVerifyingOtp(true);
-    const { error } = await supabase.auth.verifyOtp({
-      email: pendingOtpEmail,
-      token: otpCode.trim(),
-      type: "signup"
-    });
-    setVerifyingOtp(false);
-
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-
-    toast.success("Email verified");
+    toast.success(isRegister ? "Account created" : "Logged in");
     router.replace("/app/dashboard");
   }
 
@@ -179,41 +133,6 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           </div>
         </div>
 
-        {pendingOtpEmail ? (
-          <form onSubmit={verifyRegistrationOtp} className="rounded-lg border border-ink/10 bg-white p-6 shadow-soft dark:border-white/10 dark:bg-white/[0.06]">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold">Verify your email</h2>
-              <p className="mt-1 text-sm text-ink/55 dark:text-white/55">
-                We sent an OTP code to {pendingOtpEmail}. Enter it below to finish registration.
-              </p>
-            </div>
-
-            <label className="grid gap-2 text-sm font-semibold">
-              OTP code
-              <input
-                value={otpCode}
-                onChange={(event) => setOtpCode(event.target.value)}
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                className="h-11 rounded-md border border-ink/10 bg-white px-3 text-base outline-none focus:border-mint dark:border-white/10 dark:bg-white/10"
-              />
-            </label>
-
-            <Button className="mt-6 w-full" disabled={verifyingOtp}>
-              {verifyingOtp ? "Verifying..." : "Verify and continue"}
-            </Button>
-            <button
-              type="button"
-              onClick={() => {
-                setPendingOtpEmail("");
-                setOtpCode("");
-              }}
-              className="mt-4 text-sm font-semibold text-ink/60 dark:text-white/60"
-            >
-              Use a different email
-            </button>
-          </form>
-        ) : (
         <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="rounded-lg border border-ink/10 bg-white p-6 shadow-soft dark:border-white/10 dark:bg-white/[0.06]">
           <div className="mb-6">
             <h2 className="text-2xl font-bold">{isForgot ? "Reset password" : isRegister ? "Create account" : "Log in"}</h2>
@@ -252,7 +171,6 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             </Link>
           </div>
         </form>
-        )}
       </div>
       <Toaster richColors />
     </div>
