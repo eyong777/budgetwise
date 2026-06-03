@@ -99,6 +99,16 @@ function monthDateRange(month: number, year: number) {
   return { start, end };
 }
 
+function uniqueBudgetsForMonth(budgets: Budget[], month: number, year: number) {
+  const byCategory = new Map<string, Budget>();
+  budgets
+    .filter((budget) => budget.month === month && budget.year === year)
+    .forEach((budget) => {
+      if (!byCategory.has(budget.category)) byCategory.set(budget.category, budget);
+    });
+  return Array.from(byCategory.values());
+}
+
 export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -114,15 +124,12 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const [savingsSchemaReady, setSavingsSchemaReady] = useState(true);
 
   const calculateBreakdown = useCallback((month: number, year: number): BreakdownItem[] => {
-    const categories = Array.from(
-      new Set(budgets.filter((budget) => budget.month === month && budget.year === year).map((budget) => budget.category))
-    );
+    const monthBudgets = uniqueBudgetsForMonth(budgets, month, year);
+    const categories = monthBudgets.map((budget) => budget.category);
 
     return categories
       .map((category) => {
-        const budgeted = budgets
-          .filter((budget) => budget.category === category && budget.month === month && budget.year === year)
-          .reduce((sum, budget) => sum + Number(budget.limit_amount), 0);
+        const budgeted = Number(monthBudgets.find((budget) => budget.category === category)?.limit_amount ?? 0);
         const spent = transactions
           .filter((item) => item.category === category && sameMonth(item.date, month, year))
           .reduce((sum, item) => sum + Number(item.amount), 0);
@@ -211,7 +218,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
 
   const copyBudgetsToNextMonth = useCallback(async (month: number, year: number) => {
     const next = nextMonth(month, year);
-    const sourceBudgets = budgets.filter((budget) => budget.month === month && budget.year === year);
+    const sourceBudgets = uniqueBudgetsForMonth(budgets, month, year);
     if (!sourceBudgets.length) return;
 
     if (!client || !userId || !savingsSchemaReady) {
@@ -395,7 +402,46 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       toast.success("Expense deleted");
       await refresh();
     },
-    saveBudget: (budget) => mutate<Budget>("budgets", budget, "Budget saved"),
+    saveBudget: async (budget) => {
+      const month = Number(budget.month);
+      const year = Number(budget.year);
+      const category = String(budget.category);
+      const existing = budgets.find((item) =>
+        item.category === category &&
+        Number(item.month) === month &&
+        Number(item.year) === year &&
+        item.id !== budget.id
+      );
+      const targetId = existing?.id ?? budget.id;
+
+      if (!client || !userId) {
+        setBudgets((current) => {
+          if (targetId) {
+            return current
+              .map((item) => item.id === targetId ? { ...item, ...budget, id: targetId, month, year, category } as Budget : item)
+              .filter((item) => !(existing && budget.id && item.id === budget.id && item.id !== existing.id));
+          }
+          return [{ ...budget, id: `demo-${year}-${month}-${category}`, user_id: "demo", month, year, category } as Budget, ...current];
+        });
+        toast.success("Budget saved");
+        return;
+      }
+
+      const payload = { ...budget, id: targetId, user_id: userId, month, year, category };
+      const query = targetId
+        ? client.from("budgets").update(payload).eq("id", targetId).eq("user_id", userId)
+        : client.from("budgets").insert(payload);
+      const { error } = await query;
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (existing && budget.id && budget.id !== existing.id) {
+        await client.from("budgets").delete().eq("id", budget.id).eq("user_id", userId);
+      }
+      toast.success(existing ? "Existing budget updated" : "Budget saved");
+      await refresh();
+    },
     deleteBudget: async (id) => {
       if (!client) return;
       const { error } = await client.from("budgets").delete().eq("id", id);
@@ -515,14 +561,11 @@ export function getMonthlySavingsStats(
   const walletAmount = wallets.reduce((sum, wallet) => sum + Number(wallet.balance), 0);
   const currentSavings = savings.find((item) => item.month === month && item.year === year && !item.closed_at);
   const monthlySavings = Number(currentSavings?.monthly_savings ?? 0);
-  const budgetCategories = Array.from(
-    new Set(budgets.filter((budget) => budget.month === month && budget.year === year).map((budget) => budget.category))
-  );
+  const monthBudgets = uniqueBudgetsForMonth(budgets, month, year);
+  const budgetCategories = monthBudgets.map((budget) => budget.category);
   const breakdown = budgetCategories
     .map((category) => {
-      const budgeted = budgets
-        .filter((budget) => budget.category === category && budget.month === month && budget.year === year)
-        .reduce((sum, budget) => sum + Number(budget.limit_amount), 0);
+      const budgeted = Number(monthBudgets.find((budget) => budget.category === category)?.limit_amount ?? 0);
       const spent = transactions
         .filter((item) => item.category === category && sameMonth(item.date, month, year))
         .reduce((sum, item) => sum + Number(item.amount), 0);

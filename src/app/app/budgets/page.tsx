@@ -22,6 +22,13 @@ export default function BudgetsPage() {
   const activeCurrency = currency as Currency;
   const [editing, setEditing] = useState<Budget | null>(null);
   const now = monthKey();
+  const currentBudgets = Array.from(
+    new Map(
+      budgets
+        .filter((budget) => budget.month === now.month && budget.year === now.year)
+        .map((budget) => [budget.category, budget])
+    ).values()
+  );
   const form = useForm<Values>({ resolver: zodResolver(budgetSchema), defaultValues: { category: "food", limit_amount: 0, month: now.month, year: now.year } });
 
   async function submit(values: Values) {
@@ -48,7 +55,7 @@ export default function BudgetsPage() {
       </Card>
 
       <div className="grid gap-4">
-        {budgets.map((budget) => {
+        {currentBudgets.map((budget) => {
           const spent = transactions
             .filter((item) => item.type === "expense" && item.category === budget.category)
             .filter((item) => {
@@ -94,6 +101,13 @@ export default function BudgetsPage() {
             </Card>
           );
         })}
+        {currentBudgets.length === 0 && (
+          <Card>
+            <p className="text-sm text-ink/60 dark:text-white/60">
+              No budgets for {now.month}/{now.year} yet.
+            </p>
+          </Card>
+        )}
       </div>
     </div>
   );
