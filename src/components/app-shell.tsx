@@ -16,10 +16,10 @@ import {
   WalletCards
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { cn } from "@/lib/utils";
-import { FinanceProvider, useFinance } from "./finance-provider";
+import { FinanceProvider, useFinance, useMonthlyStats } from "./finance-provider";
 import { Button } from "./ui/button";
 
 const links = [
@@ -37,6 +37,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { profile } = useFinance();
+  const stats = useMonthlyStats();
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
@@ -45,6 +46,14 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     setDark(enabled);
     document.documentElement.classList.toggle("dark", enabled);
   }, []);
+
+  useEffect(() => {
+    if (pathname === "/app/savings" || pathname === "/app/settings") return;
+    if (stats.walletAmount > 0 && stats.monthlySavings <= 0) {
+      toast.error("Set Monthly Savings first before continuing.");
+      router.replace("/app/savings");
+    }
+  }, [pathname, router, stats.monthlySavings, stats.walletAmount]);
 
   function toggleDarkMode() {
     const next = !dark;
