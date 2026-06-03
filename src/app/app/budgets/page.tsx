@@ -17,18 +17,35 @@ import type { Budget, Currency } from "@/lib/types";
 
 type Values = z.infer<typeof budgetSchema>;
 
+function getSyncedBudgets(budgets: Budget[], month: number, year: number) {
+  const selected = Array.from(
+    new Map(
+      [...budgets]
+        .sort((a, b) => {
+          const aCurrent = a.month === month && a.year === year ? 0 : 1;
+          const bCurrent = b.month === month && b.year === year ? 0 : 1;
+          return aCurrent - bCurrent || b.year - a.year || b.month - a.month;
+        })
+        .map((budget) => [budget.category, budget])
+    ).values()
+  );
+
+  return selected.sort((a, b) => {
+    const aIndex = expenseCategories.indexOf(a.category as (typeof expenseCategories)[number]);
+    const bIndex = expenseCategories.indexOf(b.category as (typeof expenseCategories)[number]);
+    if (aIndex === -1 && bIndex === -1) return a.category.localeCompare(b.category);
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
+}
+
 export default function BudgetsPage() {
   const { budgets, transactions, saveBudget, deleteBudget, currency } = useFinance();
   const activeCurrency = currency as Currency;
   const [editing, setEditing] = useState<Budget | null>(null);
   const now = monthKey();
-  const currentBudgets = Array.from(
-    new Map(
-      budgets
-        .sort((a, b) => b.year - a.year || b.month - a.month)
-        .map((budget) => [budget.category, budget])
-    ).values()
-  );
+  const currentBudgets = getSyncedBudgets(budgets, now.month, now.year);
   const form = useForm<Values>({ resolver: zodResolver(budgetSchema), defaultValues: { category: "food", limit_amount: 0, month: now.month, year: now.year } });
 
   async function submit(values: Values) {

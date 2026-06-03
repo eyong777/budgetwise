@@ -5,28 +5,42 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useFinance, useMonthlyStats } from "@/components/finance-provider";
 import { money } from "@/lib/utils";
-import type { Currency } from "@/lib/types";
+import { expenseCategories } from "@/lib/constants";
+import type { Budget, Currency } from "@/lib/types";
+
+function getSyncedBudgets(budgets: Budget[], month: number, year: number) {
+  const selected = Array.from(
+    new Map(
+      [...budgets]
+        .sort((a, b) => {
+          const aCurrent = a.month === month && a.year === year ? 0 : 1;
+          const bCurrent = b.month === month && b.year === year ? 0 : 1;
+          return aCurrent - bCurrent || b.year - a.year || b.month - a.month;
+        })
+        .map((budget) => [budget.category, budget])
+    ).values()
+  );
+
+  return selected.sort((a, b) => {
+    const aIndex = expenseCategories.indexOf(a.category as (typeof expenseCategories)[number]);
+    const bIndex = expenseCategories.indexOf(b.category as (typeof expenseCategories)[number]);
+    if (aIndex === -1 && bIndex === -1) return a.category.localeCompare(b.category);
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
+}
 
 export default function DashboardPage() {
   const { transactions, budgets, currency } = useFinance();
   const activeCurrency = currency as Currency;
   const stats = useMonthlyStats();
   const latest = transactions.slice(0, 5);
-  const currentBudgets = Array.from(
-    new Map(
-      [...budgets]
-        .sort((a, b) => {
-          const aCurrent = a.month === stats.month && a.year === stats.year ? 0 : 1;
-          const bCurrent = b.month === stats.month && b.year === stats.year ? 0 : 1;
-          return aCurrent - bCurrent || b.year - a.year || b.month - a.month;
-        })
-        .map((budget) => [budget.category, budget])
-    ).values()
-  );
+  const currentBudgets = getSyncedBudgets(budgets, stats.month, stats.year);
   const monthlyBudget = currentBudgets.reduce((sum, budget) => sum + Number(budget.limit_amount), 0);
   const budgetRows = currentBudgets.map((budget) => {
     const spent = transactions
-      .filter((item) => item.category === budget.category)
+      .filter((item) => item.type === "expense" && item.category === budget.category)
       .filter((item) => {
         const date = new Date(item.date);
         return date.getMonth() + 1 === budget.month && date.getFullYear() === budget.year;
@@ -38,6 +52,7 @@ export default function DashboardPage() {
     return { ...budget, spent, limit, remaining, usage, over: spent > limit };
   });
   const totalBudgetSpent = budgetRows.reduce((sum, budget) => sum + budget.spent, 0);
+  const totalBudgetRemaining = budgetRows.reduce((sum, budget) => sum + budget.remaining, 0);
   const overBudgetCount = budgetRows.filter((budget) => budget.over).length;
 
   return (
@@ -75,7 +90,7 @@ export default function DashboardPage() {
           <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <BudgetStat label="Monthly Budget" value={money(monthlyBudget, activeCurrency)} />
             <BudgetStat label="Budget Spent" value={money(totalBudgetSpent, activeCurrency)} tone="red" />
-            <BudgetStat label="Budget Remaining" value={money(stats.unusedBudget, activeCurrency)} tone="green" />
+            <BudgetStat label="Budget Remaining" value={money(totalBudgetRemaining, activeCurrency)} tone="green" />
             <BudgetStat label="Over Budget" value={String(overBudgetCount)} tone={overBudgetCount > 0 ? "red" : "green"} />
           </div>
 
