@@ -75,7 +75,6 @@ export default function SavingsPage() {
           <div className="grid gap-3">
             <SummaryLine label="Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} />
             <SummaryLine label="Leftover Wallet" value={money(stats.leftoverWallet, activeCurrency)} />
-            <SummaryLine label="Budget Left (Limit Only)" value={money(stats.unusedBudget, activeCurrency)} />
             <SummaryLine
               label="Total Saved This Month"
               value={money(stats.totalSavedThisMonth, activeCurrency)}
