@@ -115,7 +115,12 @@ export default function SavingsPage() {
 
       <div className="grid gap-4">
         {savings.map((item) => {
-          const breakdown = savingsBreakdowns.filter((part) => part.month === item.month && part.year === item.year);
+          const breakdown = savingsBreakdowns
+            .filter((part) => part.month === item.month && part.year === item.year)
+            .filter((part) => !part.category.toLowerCase().includes("leftover wallet"));
+          const fullyUtilized = breakdown.filter((part) => Number(part.amount) <= 0);
+          const notFullyUtilized = breakdown.filter((part) => Number(part.amount) > 0);
+
           return (
             <Card key={item.id}>
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -144,30 +149,19 @@ export default function SavingsPage() {
                 <SummaryLine label="Leftover Wallet" value={money(item.leftover_wallet ?? 0, activeCurrency)} />
                 <SummaryLine label="Total Saved" value={money(item.total_saved, activeCurrency)} strong />
               </div>
-              <div className="mt-4 grid gap-2 md:grid-cols-2 lg:grid-cols-4">
-                {breakdown.map((part) => {
-                  const amount = Number(part.amount);
-                  const isLeftoverWallet = part.category.toLowerCase().includes("leftover wallet");
-                  const isFullyUtilized = amount <= 0 && !isLeftoverWallet;
-
-                  return (
-                    <div
-                      key={part.id}
-                      className={isFullyUtilized
-                        ? "rounded-md border border-coral/20 bg-coral/10 p-3 text-sm"
-                        : "rounded-md border border-mint/20 bg-mint/10 p-3 text-sm"
-                      }
-                    >
-                      <p className="capitalize text-ink/55 dark:text-white/55">{part.category}</p>
-                      <p className={isFullyUtilized ? "mt-1 font-bold text-coral" : "mt-1 font-bold text-mint"}>
-                        {isFullyUtilized ? "Fully Utilized Budget" : "Unused / Not Fully Utilized Budget"}
-                      </p>
-                      <p className={isFullyUtilized ? "mt-1 text-lg font-black text-coral" : "mt-1 text-lg font-black text-mint"}>
-                        {money(amount, activeCurrency)}
-                      </p>
-                    </div>
-                  );
-                })}
+              <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                <BudgetBreakdownColumn
+                  title="Unused Budget"
+                  items={notFullyUtilized}
+                  tone="green"
+                  currency={activeCurrency}
+                />
+                <BudgetBreakdownColumn
+                  title="Fully Used Budget"
+                  items={fullyUtilized}
+                  tone="red"
+                  currency={activeCurrency}
+                />
               </div>
             </Card>
           );
@@ -191,6 +185,46 @@ function GuideTile({ label, value }: { label: string; value: string }) {
     <div className="rounded-md bg-ink/[0.03] p-3 text-sm dark:bg-white/[0.06]">
       <p className="font-bold">{label}</p>
       <p className="mt-1 text-ink/60 dark:text-white/60">{value}</p>
+    </div>
+  );
+}
+
+function BudgetBreakdownColumn({
+  title,
+  items,
+  tone,
+  currency
+}: {
+  title: string;
+  items: { id: string; category: string; amount: number }[];
+  tone: "green" | "red";
+  currency: Currency;
+}) {
+  const isGreen = tone === "green";
+
+  return (
+    <div className={isGreen ? "rounded-md border border-mint/20 bg-mint/5 p-3" : "rounded-md border border-coral/20 bg-coral/5 p-3"}>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h3 className={isGreen ? "font-bold text-mint" : "font-bold text-coral"}>{title}</h3>
+        <span className={isGreen ? "text-sm font-black text-mint" : "text-sm font-black text-coral"}>
+          {money(items.reduce((sum, item) => sum + Number(item.amount), 0), currency)}
+        </span>
+      </div>
+      <div className="grid gap-2">
+        {items.map((part) => (
+          <div key={part.id} className="flex items-center justify-between gap-3 rounded-md bg-white/55 p-3 text-sm dark:bg-white/[0.06]">
+            <p className="capitalize text-ink/65 dark:text-white/65">{part.category}</p>
+            <p className={isGreen ? "font-black text-mint" : "font-black text-coral"}>
+              {money(Number(part.amount), currency)}
+            </p>
+          </div>
+        ))}
+        {items.length === 0 && (
+          <p className="rounded-md bg-white/45 p-3 text-sm text-ink/50 dark:bg-white/[0.06] dark:text-white/50">
+            No items
+          </p>
+        )}
+      </div>
     </div>
   );
 }
