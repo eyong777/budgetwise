@@ -51,7 +51,6 @@ export default function DashboardPage() {
     const usage = limit > 0 ? (spent / limit) * 100 : 0;
     return { ...budget, spent, limit, remaining, usage, over: spent > limit };
   });
-  const totalBudgetSpent = budgetRows.reduce((sum, budget) => sum + budget.spent, 0);
   const totalBudgetRemaining = budgetRows.reduce((sum, budget) => sum + budget.remaining, 0);
   const overBudgetCount = budgetRows.filter((budget) => budget.over).length;
 
@@ -85,13 +84,16 @@ export default function DashboardPage() {
               <h2 className="text-lg font-bold">Budget Health</h2>
               <p className="text-sm text-ink/55 dark:text-white/55">Monthly category limits with spending progress.</p>
             </div>
-          </div>
-
-          <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <BudgetStat label="Monthly Budget" value={money(monthlyBudget, activeCurrency)} />
-            <BudgetStat label="Budget Spent" value={money(totalBudgetSpent, activeCurrency)} tone="red" />
-            <BudgetStat label="Budget Remaining" value={money(totalBudgetRemaining, activeCurrency)} tone="green" />
-            <BudgetStat label="Over Budget" value={String(overBudgetCount)} tone={overBudgetCount > 0 ? "red" : "green"} />
+            <div className="flex flex-wrap gap-2">
+              <span className="rounded-md bg-mint/10 px-3 py-2 text-sm font-bold text-mint">
+                {money(totalBudgetRemaining, activeCurrency)} left
+              </span>
+              {overBudgetCount > 0 && (
+                <span className="rounded-md bg-coral/10 px-3 py-2 text-sm font-bold text-coral">
+                  {overBudgetCount} over budget
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -167,15 +169,6 @@ function MiniMetric({ label, value, tone = "default" }: { label: string; value: 
     <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
       <p className="text-sm text-ink/55 dark:text-white/55">{label}</p>
       <p className={tone === "green" ? "mt-1 text-xl font-black text-mint" : tone === "red" ? "mt-1 text-xl font-black text-coral" : "mt-1 text-xl font-black"}>{value}</p>
-    </div>
-  );
-}
-
-function BudgetStat({ label, value, tone = "default" }: { label: string; value: string; tone?: "default" | "green" | "red" }) {
-  return (
-    <div className="rounded-md border border-white/55 bg-white/45 p-4 backdrop-blur dark:border-white/10 dark:bg-white/[0.06]">
-      <p className="text-xs font-semibold uppercase tracking-wide text-ink/45 dark:text-white/45">{label}</p>
-      <p className={tone === "green" ? "mt-2 text-xl font-black text-mint" : tone === "red" ? "mt-2 text-xl font-black text-coral" : "mt-2 text-xl font-black"}>{value}</p>
     </div>
   );
 }
