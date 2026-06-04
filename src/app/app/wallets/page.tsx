@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRightLeft, Pencil, Trash2, WalletCards } from "lucide-react";
+import { Pencil, Trash2, WalletCards } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,13 +17,10 @@ import type { Currency, Wallet } from "@/lib/types";
 type Values = z.infer<typeof walletSchema>;
 
 export default function WalletsPage() {
-  const { wallets, saveWallet, deleteWallet, transfer, currency } = useFinance();
+  const { wallets, saveWallet, deleteWallet, currency } = useFinance();
   const stats = useMonthlyStats();
   const activeCurrency = currency as Currency;
   const [editing, setEditing] = useState<Wallet | null>(null);
-  const [fromId, setFromId] = useState("");
-  const [toId, setToId] = useState("");
-  const [amount, setAmount] = useState(0);
   const form = useForm<Values>({ resolver: zodResolver(walletSchema), defaultValues: { name: "", type: "bank", balance: 0 } });
 
   async function submit(values: Values) {
@@ -51,7 +48,6 @@ export default function WalletsPage() {
       </Card>
 
       <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
-      <div className="grid gap-6">
         <Card>
           <h2 className="flex items-center gap-2 text-lg font-bold"><WalletCards size={20} /> {editing ? "Edit wallet" : "Add wallet money"}</h2>
           <p className="mb-4 mt-1 text-sm text-ink/55 dark:text-white/55">After adding wallet money, set Monthly Savings before continuing.</p>
@@ -64,22 +60,6 @@ export default function WalletsPage() {
             <Button disabled={form.formState.isSubmitting}>{editing ? "Save wallet" : "Add wallet"}</Button>
           </form>
         </Card>
-        <Card>
-          <h2 className="mb-4 flex items-center gap-2 text-lg font-bold"><ArrowRightLeft size={20} /> Transfer money</h2>
-          <div className="grid gap-4">
-            <SelectField label="From" value={fromId} onChange={(e) => setFromId(e.target.value)}>
-              <option value="">Choose wallet</option>
-              {wallets.map((wallet) => <option key={wallet.id} value={wallet.id}>{wallet.name}</option>)}
-            </SelectField>
-            <SelectField label="To" value={toId} onChange={(e) => setToId(e.target.value)}>
-              <option value="">Choose wallet</option>
-              {wallets.map((wallet) => <option key={wallet.id} value={wallet.id}>{wallet.name}</option>)}
-            </SelectField>
-            <Field label="Amount" type="number" step="0.01" value={amount} onChange={(e) => setAmount(Number(e.target.value))} />
-            <Button onClick={() => transfer(fromId, toId, amount)}>Transfer</Button>
-          </div>
-        </Card>
-      </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         {wallets.map((wallet) => (
