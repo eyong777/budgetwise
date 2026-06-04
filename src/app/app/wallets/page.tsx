@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Field, SelectField } from "@/components/ui/field";
-import { useFinance, useMonthlyStats } from "@/components/finance-provider";
+import { useFinance } from "@/components/finance-provider";
 import { walletTypes } from "@/lib/constants";
 import { money } from "@/lib/utils";
 import { walletSchema } from "@/lib/validations";
