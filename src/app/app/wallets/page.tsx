@@ -18,7 +18,6 @@ type Values = z.infer<typeof walletSchema>;
 
 export default function WalletsPage() {
   const { wallets, saveWallet, deleteWallet, currency } = useFinance();
-  const stats = useMonthlyStats();
   const activeCurrency = currency as Currency;
   const [editing, setEditing] = useState<Wallet | null>(null);
   const form = useForm<Values>({ resolver: zodResolver(walletSchema), defaultValues: { name: "", type: "bank", balance: 0 } });
@@ -31,22 +30,6 @@ export default function WalletsPage() {
 
   return (
     <div className="grid gap-6">
-      <Card>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <p className="text-sm text-ink/55 dark:text-white/55">Monthly Savings + Expenses</p>
-            <p className="mt-1 text-2xl font-black text-coral">{money(stats.monthlySavings + stats.monthlyExpenses, activeCurrency)}</p>
-          </div>
-          <div>
-            <p className="text-sm text-ink/55 dark:text-white/55">Money Left to Spend</p>
-            <p className="mt-1 text-2xl font-black text-mint">{money(stats.walletBalance, activeCurrency)}</p>
-          </div>
-        </div>
-        <p className="mt-4 rounded-md bg-ink/[0.03] p-3 text-sm text-ink/60 dark:bg-white/[0.06] dark:text-white/60">
-          Wallet cards show each account balance. Monthly savings and expenses are separated so you can clearly see money left to spend.
-        </p>
-      </Card>
-
       <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
         <Card>
           <h2 className="flex items-center gap-2 text-lg font-bold"><WalletCards size={20} /> {editing ? "Edit wallet" : "Add wallet money"}</h2>
