@@ -127,11 +127,8 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           </Link>
 
           <div className="relative z-10 mt-10 max-w-xl lg:mt-16">
-            <p className="mb-4 inline-flex rounded-full bg-mint/10 px-4 py-2 text-sm font-bold text-mint">
-              Personal finance made clear
-            </p>
             <h1 className="text-4xl font-black leading-tight sm:text-5xl lg:text-[4.2rem]">
-              Build the life <span className="text-mint">you love.</span>
+              budget <span className="text-mint">ta noy!</span>
             </h1>
             <p className="mt-5 max-w-lg text-lg leading-8 text-ink/65 dark:text-white/65">
               BudgetWise keeps your wallet, budgets, expenses, and savings easy to follow every month.
