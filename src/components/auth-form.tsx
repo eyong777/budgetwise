@@ -113,7 +113,8 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     }
 
     toast.success(isRegister ? "Account created" : "Logged in");
-    router.replace("/app/dashboard");
+    router.refresh();
+    window.location.assign("/app/dashboard");
   }
 
   return (
