@@ -62,11 +62,11 @@ function ShellInner({ children }: { children: React.ReactNode }) {
       setShowLoader(true);
       setLoadProgress(0);
       interval = window.setInterval(() => {
-        setLoadProgress((current) => Math.min(current + 4, 94));
-      }, 90);
+        setLoadProgress((current) => Math.min(current + 12, 96));
+      }, 45);
     } else if (showLoader) {
       setLoadProgress(100);
-      timeout = window.setTimeout(() => setShowLoader(false), 420);
+      timeout = window.setTimeout(() => setShowLoader(false), 180);
     }
 
     return () => {

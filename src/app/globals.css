@@ -16,15 +16,15 @@ body {
 }
 
 .budgetwise-loader {
-  animation: budgetwise-loader-fade-in 360ms ease both;
+  animation: budgetwise-loader-fade-in 180ms ease both;
 }
 
 .budgetwise-loader-done {
-  animation: budgetwise-loader-fade-out 420ms ease both;
+  animation: budgetwise-loader-fade-out 180ms ease both;
 }
 
 .budgetwise-loader-icon {
-  animation: budgetwise-loader-bounce 1.6s ease-in-out infinite;
+  animation: budgetwise-loader-bounce 1s ease-in-out infinite;
 }
 
 .budgetwise-loader-bar {
@@ -34,7 +34,7 @@ body {
 }
 
 .budgetwise-loader-bar::after {
-  animation: budgetwise-loader-shimmer 1.25s linear infinite;
+  animation: budgetwise-loader-shimmer 0.75s linear infinite;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
   content: "";
   inset: 0;
