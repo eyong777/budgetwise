@@ -247,45 +247,45 @@ function ShellInner({ children }: { children: React.ReactNode }) {
         })}
       </nav>
       {salaryAllocation ? (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-[#020711]/70 px-4 backdrop-blur-md">
-          <div className="w-full max-w-lg rounded-xl border border-mint/35 bg-[#07111d]/90 p-5 text-white shadow-[0_0_70px_rgba(40,168,107,0.28)] backdrop-blur-2xl sm:p-6">
+        <div className="fixed inset-0 z-50 grid place-items-center bg-ink/35 px-4 backdrop-blur-lg dark:bg-black/50">
+          <div className="w-full max-w-lg rounded-2xl border border-white/75 bg-white/82 p-5 text-ink shadow-[0_30px_90px_rgba(23,32,26,0.20)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#121816]/88 dark:text-white sm:p-6">
             <div className="flex items-start gap-4">
-              <span className="grid size-14 shrink-0 place-items-center rounded-xl border border-mint/35 bg-mint/15 text-mint shadow-[0_0_28px_rgba(40,168,107,0.35)]">
+              <span className="grid size-14 shrink-0 place-items-center rounded-2xl border border-mint/25 bg-mint/10 text-mint shadow-[0_18px_44px_rgba(40,168,107,0.18)]">
                 <CheckCircle2 size={30} />
               </span>
               <div>
-                <h2 className="text-2xl font-black leading-tight">Salary Allocated Successfully</h2>
-                <p className="mt-2 text-sm leading-6 text-white/70">
+                <h2 className="text-2xl font-black leading-tight tracking-normal">Salary Allocated Successfully</h2>
+                <p className="mt-2 text-sm leading-6 text-ink/58 dark:text-white/65">
                   Your salary has been processed automatically.
                 </p>
               </div>
             </div>
 
-            <div className="mt-5 space-y-3 rounded-lg border border-white/10 bg-white/[0.06] p-4 text-sm leading-6 text-white/78">
+            <div className="mt-5 space-y-3 rounded-xl border border-ink/10 bg-white/62 p-4 text-sm leading-6 text-ink/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] dark:border-white/10 dark:bg-white/[0.06] dark:text-white/75">
               <p>{money(salaryAllocation.budgetReservedAmount, activeCurrency)} has been reserved for this month&apos;s budget.</p>
               <p>{money(salaryAllocation.savingsAmount, activeCurrency)} has been automatically transferred to Savings.</p>
               <p>All remaining funds have been secured in Savings.</p>
             </div>
 
-            <div className="mt-5 rounded-lg border border-cyan-300/20 bg-cyan-300/[0.06] p-4">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200/80">Summary</p>
+            <div className="mt-5 rounded-xl border border-mint/20 bg-mint/[0.07] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] dark:border-mint/20 dark:bg-mint/[0.08]">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">Summary</p>
               <div className="mt-3 grid gap-2 text-sm">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-white/65">Salary Added</span>
+                  <span className="text-ink/55 dark:text-white/60">Salary Added</span>
                   <strong>{money(salaryAllocation.salaryAmount, activeCurrency)}</strong>
                 </div>
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-white/65">Budget Reserved</span>
+                  <span className="text-ink/55 dark:text-white/60">Budget Reserved</span>
                   <strong>{money(salaryAllocation.budgetReservedAmount, activeCurrency)}</strong>
                 </div>
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-white/65">Moved to Savings</span>
+                  <span className="text-ink/55 dark:text-white/60">Moved to Savings</span>
                   <strong className="text-mint">{money(salaryAllocation.savingsAmount, activeCurrency)}</strong>
                 </div>
               </div>
             </div>
 
-            <Button className="mt-5 h-12 w-full border border-mint/40 bg-mint text-base font-bold text-white shadow-[0_0_30px_rgba(40,168,107,0.28)] hover:bg-mint/90" onClick={dismissSalaryAllocation}>
+            <Button className="mt-5 h-12 w-full border border-mint/30 bg-mint text-base font-bold text-white shadow-glow hover:bg-mint/90" onClick={dismissSalaryAllocation}>
               OK
             </Button>
           </div>
