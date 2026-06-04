@@ -44,7 +44,6 @@ function ShellInner({ children }: { children: React.ReactNode }) {
   const { currency, dismissSalaryAllocation, loading, profile, salaryAllocation } = useFinance();
   const [dark, setDark] = useState(false);
   const [showLoader, setShowLoader] = useState(loading);
-  const [loadProgress, setLoadProgress] = useState(0);
   const activeCurrency = currency as Currency;
 
   useEffect(() => {
@@ -55,22 +54,15 @@ function ShellInner({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    let interval: number | undefined;
     let timeout: number | undefined;
 
     if (loading) {
       setShowLoader(true);
-      setLoadProgress(0);
-      interval = window.setInterval(() => {
-        setLoadProgress((current) => Math.min(current + 12, 96));
-      }, 45);
     } else if (showLoader) {
-      setLoadProgress(100);
       timeout = window.setTimeout(() => setShowLoader(false), 180);
     }
 
     return () => {
-      if (interval) window.clearInterval(interval);
       if (timeout) window.clearTimeout(timeout);
     };
   }, [loading, showLoader]);
@@ -135,23 +127,56 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     return (
       <div
         className={cn(
-          "budgetwise-loader grid min-h-screen place-items-center bg-[linear-gradient(135deg,#f7f8f4_0%,#edf6f0_48%,#f7f8f4_100%)] px-4 text-ink",
+          "budgetwise-loader grid min-h-screen place-items-center bg-[radial-gradient(circle_at_18%_0%,rgba(40,168,107,0.14),transparent_30%),linear-gradient(135deg,#f7f8f4_0%,#edf6f0_48%,#f7f8f4_100%)] px-4 text-ink",
           !loading && "budgetwise-loader-done"
         )}
       >
-        <div className="w-full max-w-xl rounded-xl border border-white/70 bg-white/75 p-8 text-center shadow-[0_24px_80px_rgba(23,32,26,0.13)] backdrop-blur-xl sm:p-10">
-          <span className="budgetwise-loader-icon mx-auto grid size-16 place-items-center rounded-xl bg-mint text-white shadow-[0_14px_32px_rgba(40,168,107,0.28)]">
-            <PiggyBank size={34} />
-          </span>
-          <h1 className="mt-7 text-3xl font-black tracking-normal sm:text-4xl">Loading BudgetWise</h1>
-          <div className="mt-7 flex items-center gap-3">
-            <div className="h-3 flex-1 overflow-hidden rounded-full bg-ink/10">
-              <div
-                className="budgetwise-loader-bar h-full rounded-full bg-mint"
-                style={{ width: `${loadProgress}%` }}
-              />
+        <div className="w-full max-w-5xl rounded-2xl border border-white/75 bg-white/70 p-5 shadow-[0_28px_90px_rgba(23,32,26,0.14)] backdrop-blur-2xl sm:p-7">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="budgetwise-loader-icon grid size-12 place-items-center rounded-xl bg-mint text-white shadow-[0_14px_32px_rgba(40,168,107,0.28)]">
+                <PiggyBank size={26} />
+              </span>
+              <div>
+                <h1 className="text-2xl font-black tracking-normal">Loading BudgetWise</h1>
+                <p className="text-sm text-ink/55">Preparing your dashboard...</p>
+              </div>
             </div>
-            <span className="w-12 text-right text-sm font-black text-mint">{loadProgress}%</span>
+            <span className="hidden rounded-full bg-mint/10 px-3 py-1 text-xs font-bold text-mint sm:inline-flex">
+              Loading
+            </span>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {[0, 1, 2].map((item) => (
+              <div key={item} className="rounded-xl border border-ink/10 bg-white/72 p-5 shadow-[0_16px_42px_rgba(23,32,26,0.08)]">
+                <div className="mb-5 flex items-start justify-between gap-3">
+                  <div className="grid flex-1 gap-3">
+                    <div className="budgetwise-skeleton h-3 w-24 rounded-full" />
+                    <div className="budgetwise-skeleton h-8 w-36 rounded-lg" />
+                  </div>
+                  <div className="budgetwise-skeleton size-10 rounded-full" />
+                </div>
+                <div className="grid gap-2">
+                  <div className="budgetwise-skeleton h-2.5 w-full rounded-full" />
+                  <div className="budgetwise-skeleton h-2.5 w-2/3 rounded-full" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 rounded-xl border border-mint/15 bg-mint/[0.06] p-4">
+            <div className="grid gap-3 md:grid-cols-[1fr_auto_1fr] md:items-center">
+              <div className="grid gap-2">
+                <div className="budgetwise-skeleton h-3 w-32 rounded-full" />
+                <div className="budgetwise-skeleton h-3 w-48 rounded-full" />
+              </div>
+              <div className="hidden h-px w-16 bg-mint/30 md:block" />
+              <div className="grid gap-2">
+                <div className="budgetwise-skeleton h-3 w-28 rounded-full" />
+                <div className="budgetwise-skeleton h-3 w-40 rounded-full" />
+              </div>
+            </div>
           </div>
         </div>
       </div>

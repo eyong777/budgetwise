@@ -67,6 +67,12 @@ html {
   transform: translateX(-100%);
 }
 
+.budgetwise-skeleton {
+  background: linear-gradient(90deg, rgba(23, 32, 26, 0.08), rgba(40, 168, 107, 0.12), rgba(23, 32, 26, 0.08));
+  background-size: 220% 100%;
+  animation: budgetwise-skeleton-sweep 1s ease-in-out infinite;
+}
+
 @keyframes budgetwise-loader-fade-in {
   from {
     opacity: 0;
@@ -105,6 +111,16 @@ html {
 @keyframes budgetwise-loader-shimmer {
   to {
     transform: translateX(100%);
+  }
+}
+
+@keyframes budgetwise-skeleton-sweep {
+  0% {
+    background-position: 220% 0;
+  }
+
+  100% {
+    background-position: -220% 0;
   }
 }
 
