@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDownRight, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useFinance, useMonthlyStats } from "@/components/finance-provider";
@@ -35,7 +35,6 @@ export default function DashboardPage() {
   const { transactions, budgets, currency } = useFinance();
   const activeCurrency = currency as Currency;
   const stats = useMonthlyStats();
-  const latest = transactions.slice(0, 5);
   const currentBudgets = getSyncedBudgets(budgets, stats.month, stats.year);
   const monthlyBudget = currentBudgets.reduce((sum, budget) => sum + Number(budget.limit_amount), 0);
   const budgetRows = currentBudgets.map((budget) => {
@@ -140,30 +139,6 @@ export default function DashboardPage() {
         </Card>
       </section>
 
-      <section>
-        <Card>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-bold">Recent Expenses</h2>
-            <ArrowDownRight className="text-coral" size={20} />
-          </div>
-          <div className="grid gap-3">
-            {latest.map((item) => (
-              <div key={item.id} className="flex items-center justify-between rounded-md border border-ink/10 p-3 dark:border-white/10">
-                <div>
-                  <p className="font-semibold capitalize">{item.category}</p>
-                  <p className="text-sm text-ink/50 dark:text-white/50">{item.description || item.date}</p>
-                </div>
-                <p className="font-bold text-coral">-{money(item.amount, activeCurrency)}</p>
-              </div>
-            ))}
-            {latest.length === 0 && (
-              <p className="rounded-md bg-ink/[0.03] p-4 text-sm text-ink/60 dark:bg-white/[0.06] dark:text-white/60">
-                No expenses yet this month.
-              </p>
-            )}
-          </div>
-        </Card>
-      </section>
     </div>
   );
 }
