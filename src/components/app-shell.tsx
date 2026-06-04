@@ -229,7 +229,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
                 <CheckCircle2 size={30} />
               </span>
               <div>
-                <h2 className="text-2xl font-black leading-tight">✅ Salary Allocated Successfully</h2>
+                <h2 className="text-2xl font-black leading-tight">Salary Allocated Successfully</h2>
                 <p className="mt-2 text-sm leading-6 text-white/70">
                   Your salary has been processed automatically.
                 </p>
