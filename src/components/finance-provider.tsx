@@ -144,13 +144,13 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       });
   }, [budgets, transactions]);
 
-  const saveSavingsRecord = useCallback(async (manualAmount: number, month: number, year: number, close = false) => {
+  const saveSavingsRecord = useCallback(async (manualAmount: number, month: number, year: number, close = false, walletSnapshot = wallets) => {
     const breakdown = calculateBreakdown(month, year);
     const unusedBudget = breakdown.reduce((sum, item) => sum + item.amount, 0);
     const expenses = transactions
       .filter((item) => sameMonth(item.date, month, year))
       .reduce((sum, item) => sum + Number(item.amount), 0);
-    const walletAmount = wallets.reduce((sum, wallet) => sum + Number(wallet.balance), 0);
+    const walletAmount = walletSnapshot.reduce((sum, wallet) => sum + Number(wallet.balance), 0);
     const leftoverWallet = Math.max(0, walletAmount - Number(manualAmount) - expenses);
     const totalSaved = Number(manualAmount) + leftoverWallet;
     const fullBreakdown = [
@@ -321,7 +321,50 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     currency,
     setCurrency,
     refresh,
-    saveWallet: (wallet) => mutate<Wallet>("wallets", wallet, "Wallet saved"),
+    saveWallet: async (wallet) => {
+      const active = monthKey();
+      const salaryAmount = Number(wallet.balance ?? 0);
+      const monthlyBudgetAmount = uniqueBudgetsForMonth(budgets, active.month, active.year)
+        .reduce((sum, budget) => sum + Number(budget.limit_amount), 0);
+      const savingsAmount = Math.max(0, salaryAmount - monthlyBudgetAmount);
+      const walletPayload = { ...wallet, balance: salaryAmount };
+
+      if (!client || !userId) {
+        const nextWallet = {
+          ...walletPayload,
+          id: wallet.id ?? `demo-wallet-${Date.now()}`,
+          user_id: "demo"
+        } as Wallet;
+        const nextWallets = wallet.id
+          ? wallets.map((item) => item.id === wallet.id ? { ...item, ...nextWallet } : item)
+          : [nextWallet, ...wallets];
+
+        setWallets(nextWallets);
+        await saveSavingsRecord(savingsAmount, active.month, active.year, false, nextWallets);
+        toast.success(savingsAmount > 0 ? "Wallet saved and salary remainder moved to savings" : "Wallet saved");
+        return;
+      }
+
+      const payload = { ...walletPayload, user_id: userId };
+      const query = wallet.id
+        ? client.from("wallets").update(payload).eq("id", wallet.id).eq("user_id", userId).select().single()
+        : client.from("wallets").insert(payload).select().single();
+      const { data, error } = await query;
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
+      const savedWallet = data as Wallet;
+      const nextWallets = wallet.id
+        ? wallets.map((item) => item.id === wallet.id ? savedWallet : item)
+        : [savedWallet, ...wallets];
+
+      await saveSavingsRecord(savingsAmount, active.month, active.year, false, nextWallets);
+      toast.success(savingsAmount > 0 ? "Wallet saved and salary remainder moved to savings" : "Wallet saved");
+      await refresh();
+    },
     deleteWallet: async (id) => {
       if (!client || !userId) return;
       const { error } = await client.from("wallets").delete().eq("id", id).eq("user_id", userId);

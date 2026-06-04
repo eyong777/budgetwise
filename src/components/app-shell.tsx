@@ -16,10 +16,10 @@ import {
   WalletCards
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { toast, Toaster } from "sonner";
+import { Toaster } from "sonner";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { cn } from "@/lib/utils";
-import { FinanceProvider, useFinance, useMonthlyStats } from "./finance-provider";
+import { FinanceProvider, useFinance } from "./finance-provider";
 import { Button } from "./ui/button";
 
 const links = [
@@ -39,12 +39,8 @@ const LAST_ACTIVITY_KEY = "budgetwise-last-activity";
 function ShellInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { loading, profile, saveMonthlySavings } = useFinance();
-  const stats = useMonthlyStats();
+  const { loading, profile } = useFinance();
   const [dark, setDark] = useState(false);
-  const [requiredSavings, setRequiredSavings] = useState("");
-  const [savingRequiredSavings, setSavingRequiredSavings] = useState(false);
-  const savingsRequired = stats.walletAmount > 0 && stats.monthlySavings <= 0;
 
   useEffect(() => {
     const stored = localStorage.getItem("budgetwise-theme");
@@ -108,19 +104,6 @@ function ShellInner({ children }: { children: React.ReactNode }) {
       window.clearInterval(interval);
     };
   }, [router]);
-
-  async function submitRequiredSavings(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const amount = Number(requiredSavings);
-    if (!amount || amount <= 0) {
-      toast.error("Monthly Savings is required before continuing.");
-      return;
-    }
-    setSavingRequiredSavings(true);
-    await saveMonthlySavings(amount);
-    setSavingRequiredSavings(false);
-    setRequiredSavings("");
-  }
 
   if (loading) {
     return (
@@ -201,41 +184,6 @@ function ShellInner({ children }: { children: React.ReactNode }) {
           );
         })}
       </nav>
-      {savingsRequired && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-ink/45 px-4 backdrop-blur-md dark:bg-black/55">
-          <form onSubmit={submitRequiredSavings} className="w-full max-w-md rounded-lg border border-white/50 bg-white/75 p-6 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-[#121816]/85">
-            <div className="mb-5 flex items-start gap-3">
-              <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-mint text-white">
-                <PiggyBank />
-              </span>
-              <div>
-                <h2 className="text-xl font-bold">Monthly Savings Required</h2>
-                <p className="mt-1 text-sm text-ink/60 dark:text-white/60">
-                  You already added wallet money. You must put a Monthly Savings amount before you can continue.
-                </p>
-              </div>
-            </div>
-            <div className="mb-4 rounded-md bg-coral/10 p-3 text-sm font-semibold text-coral">
-              Please enter your Monthly Savings amount first.
-            </div>
-            <label className="grid gap-2 text-sm font-semibold">
-              Monthly Savings Amount
-              <input
-                value={requiredSavings}
-                onChange={(event) => setRequiredSavings(event.target.value)}
-                type="number"
-                min="0.01"
-                step="0.01"
-                autoFocus
-                className="h-11 rounded-md border border-ink/10 bg-white px-3 text-base outline-none focus:border-mint dark:border-white/10 dark:bg-white/10"
-              />
-            </label>
-            <Button className="mt-5 w-full" disabled={savingRequiredSavings}>
-              {savingRequiredSavings ? "Saving..." : "Save Monthly Savings"}
-            </Button>
-          </form>
-        </div>
-      )}
       <Toaster richColors position="top-right" />
     </div>
   );
