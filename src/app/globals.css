@@ -73,6 +73,17 @@ html {
   animation: budgetwise-skeleton-sweep 1s ease-in-out infinite;
 }
 
+.budgetwise-spinner {
+  animation: budgetwise-spinner-rotate 900ms linear infinite;
+  aspect-ratio: 1;
+  background: conic-gradient(from 0deg, rgba(40, 168, 107, 0.08), #24d7c0, #28a86b, rgba(40, 168, 107, 0.08));
+  border-radius: 999px;
+  height: 74px;
+  mask: radial-gradient(farthest-side, transparent calc(100% - 12px), #000 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 12px), #000 0);
+  width: 74px;
+}
+
 @keyframes budgetwise-loader-fade-in {
   from {
     opacity: 0;
@@ -121,6 +132,12 @@ html {
 
   100% {
     background-position: -220% 0;
+  }
+}
+
+@keyframes budgetwise-spinner-rotate {
+  to {
+    transform: rotate(360deg);
   }
 }
 

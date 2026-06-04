@@ -123,66 +123,6 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     };
   }, [router]);
 
-  if (showLoader) {
-    return (
-      <div
-        className={cn(
-          "budgetwise-loader grid min-h-screen place-items-center bg-[radial-gradient(circle_at_18%_0%,rgba(40,168,107,0.14),transparent_30%),linear-gradient(135deg,#f7f8f4_0%,#edf6f0_48%,#f7f8f4_100%)] px-4 text-ink",
-          !loading && "budgetwise-loader-done"
-        )}
-      >
-        <div className="w-full max-w-5xl rounded-2xl border border-white/75 bg-white/70 p-5 shadow-[0_28px_90px_rgba(23,32,26,0.14)] backdrop-blur-2xl sm:p-7">
-          <div className="mb-6 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="budgetwise-loader-icon grid size-12 place-items-center rounded-xl bg-mint text-white shadow-[0_14px_32px_rgba(40,168,107,0.28)]">
-                <PiggyBank size={26} />
-              </span>
-              <div>
-                <h1 className="text-2xl font-black tracking-normal">Loading BudgetWise</h1>
-                <p className="text-sm text-ink/55">Preparing your dashboard...</p>
-              </div>
-            </div>
-            <span className="hidden rounded-full bg-mint/10 px-3 py-1 text-xs font-bold text-mint sm:inline-flex">
-              Loading
-            </span>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {[0, 1, 2].map((item) => (
-              <div key={item} className="rounded-xl border border-ink/10 bg-white/72 p-5 shadow-[0_16px_42px_rgba(23,32,26,0.08)]">
-                <div className="mb-5 flex items-start justify-between gap-3">
-                  <div className="grid flex-1 gap-3">
-                    <div className="budgetwise-skeleton h-3 w-24 rounded-full" />
-                    <div className="budgetwise-skeleton h-8 w-36 rounded-lg" />
-                  </div>
-                  <div className="budgetwise-skeleton size-10 rounded-full" />
-                </div>
-                <div className="grid gap-2">
-                  <div className="budgetwise-skeleton h-2.5 w-full rounded-full" />
-                  <div className="budgetwise-skeleton h-2.5 w-2/3 rounded-full" />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-5 rounded-xl border border-mint/15 bg-mint/[0.06] p-4">
-            <div className="grid gap-3 md:grid-cols-[1fr_auto_1fr] md:items-center">
-              <div className="grid gap-2">
-                <div className="budgetwise-skeleton h-3 w-32 rounded-full" />
-                <div className="budgetwise-skeleton h-3 w-48 rounded-full" />
-              </div>
-              <div className="hidden h-px w-16 bg-mint/30 md:block" />
-              <div className="grid gap-2">
-                <div className="budgetwise-skeleton h-3 w-28 rounded-full" />
-                <div className="budgetwise-skeleton h-3 w-40 rounded-full" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_14%_0%,rgba(40,168,107,0.16),transparent_30%),linear-gradient(135deg,#f7f8f4_0%,#eef7f1_48%,#f7f8f4_100%)] text-ink dark:bg-[radial-gradient(circle_at_14%_0%,rgba(40,168,107,0.12),transparent_30%),linear-gradient(135deg,#101412_0%,#132018_52%,#101412_100%)] dark:text-white">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-white/55 bg-white/62 p-4 shadow-soft backdrop-blur-2xl dark:border-white/10 dark:bg-[#121816]/72 lg:block">
@@ -288,6 +228,19 @@ function ShellInner({ children }: { children: React.ReactNode }) {
             <Button className="mt-5 h-12 w-full border border-mint/30 bg-mint text-base font-bold text-white shadow-glow hover:bg-mint/90" onClick={dismissSalaryAllocation}>
               OK
             </Button>
+          </div>
+        </div>
+      ) : null}
+      {showLoader ? (
+        <div
+          className={cn(
+            "budgetwise-loader pointer-events-none fixed inset-0 z-40 grid place-items-center bg-white/35 backdrop-blur-[2px] dark:bg-black/20",
+            !loading && "budgetwise-loader-done"
+          )}
+        >
+          <div className="grid justify-items-center gap-3 rounded-2xl border border-white/70 bg-white/42 px-8 py-7 shadow-[0_24px_80px_rgba(23,32,26,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.08]">
+            <div className="budgetwise-spinner" aria-hidden="true" />
+            <p className="text-sm font-bold text-ink/65 dark:text-white/70">Loading BudgetWise</p>
           </div>
         </div>
       ) : null}
