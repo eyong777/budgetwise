@@ -39,7 +39,7 @@ const LAST_ACTIVITY_KEY = "budgetwise-last-activity";
 function ShellInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { profile, saveMonthlySavings } = useFinance();
+  const { loading, profile, saveMonthlySavings } = useFinance();
   const stats = useMonthlyStats();
   const [dark, setDark] = useState(false);
   const [requiredSavings, setRequiredSavings] = useState("");
@@ -120,6 +120,22 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     await saveMonthlySavings(amount);
     setSavingRequiredSavings(false);
     setRequiredSavings("");
+  }
+
+  if (loading) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-[linear-gradient(135deg,#f7f8f4_0%,#eef7f1_48%,#f7f8f4_100%)] px-4 text-ink dark:bg-[linear-gradient(135deg,#101412_0%,#132018_52%,#101412_100%)] dark:text-white">
+        <div className="w-full max-w-sm rounded-lg border border-white/55 bg-white/60 p-6 text-center shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.08]">
+          <span className="mx-auto grid size-12 place-items-center rounded-lg bg-mint text-white">
+            <PiggyBank />
+          </span>
+          <h1 className="mt-4 text-xl font-bold">Loading BudgetWise</h1>
+          <div className="mt-5 h-2 overflow-hidden rounded-full bg-ink/10 dark:bg-white/10">
+            <div className="h-full w-1/2 animate-pulse rounded-full bg-mint" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

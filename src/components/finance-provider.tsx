@@ -110,12 +110,12 @@ function uniqueBudgetsForMonth(budgets: Budget[], month: number, year: number) {
 export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [wallets, setWallets] = useState<Wallet[]>(demoWallets);
-  const [transactions, setTransactions] = useState<Transaction[]>(demoTransactions);
-  const [budgets, setBudgets] = useState<Budget[]>(demoBudgets);
-  const [savings, setSavings] = useState<MonthlySaving[]>(demoSavings);
-  const [savingsBreakdowns, setSavingsBreakdowns] = useState<SavingsBreakdown[]>(demoBreakdowns);
-  const [recurring, setRecurring] = useState<RecurringTransaction[]>(demoRecurring);
+  const [wallets, setWallets] = useState<Wallet[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [savings, setSavings] = useState<MonthlySaving[]>([]);
+  const [savingsBreakdowns, setSavingsBreakdowns] = useState<SavingsBreakdown[]>([]);
+  const [recurring, setRecurring] = useState<RecurringTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [currency, setCurrency] = useState("AED");
   const [client, setClient] = useState<ReturnType<typeof createSupabaseBrowserClient> | null>(null);
@@ -222,6 +222,13 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     setUserId(user?.id ?? null);
 
     if (!user) {
+      setProfile(null);
+      setWallets([]);
+      setTransactions([]);
+      setBudgets([]);
+      setSavings([]);
+      setSavingsBreakdowns([]);
+      setRecurring([]);
       setLoading(false);
       return;
     }
@@ -259,6 +266,12 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     try {
       setClient(createSupabaseBrowserClient());
     } catch {
+      setWallets(demoWallets);
+      setTransactions(demoTransactions);
+      setBudgets(demoBudgets);
+      setSavings(demoSavings);
+      setSavingsBreakdowns(demoBreakdowns);
+      setRecurring(demoRecurring);
       setLoading(false);
     }
   }, []);
