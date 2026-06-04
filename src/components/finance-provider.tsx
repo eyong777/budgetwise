@@ -228,12 +228,12 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
 
     const [profileRes, walletRes, txRes, budgetRes, savingsRes, breakdownRes, recurringRes] = await Promise.all([
       client.from("profiles").select("*").eq("id", user.id).single(),
-      client.from("wallets").select("*").order("created_at", { ascending: true }),
-      client.from("transactions").select("*").eq("type", "expense").order("date", { ascending: false }),
-      client.from("budgets").select("*").order("year", { ascending: false }).order("month", { ascending: false }),
-      client.from("savings").select("*").order("year", { ascending: false }).order("month", { ascending: false }),
-      client.from("savings_breakdown").select("*").order("year", { ascending: false }).order("month", { ascending: false }),
-      client.from("recurring_transactions").select("*").eq("type", "expense").order("next_run", { ascending: true })
+      client.from("wallets").select("*").eq("user_id", user.id).order("created_at", { ascending: true }),
+      client.from("transactions").select("*").eq("user_id", user.id).eq("type", "expense").order("date", { ascending: false }),
+      client.from("budgets").select("*").eq("user_id", user.id).order("year", { ascending: false }).order("month", { ascending: false }),
+      client.from("savings").select("*").eq("user_id", user.id).order("year", { ascending: false }).order("month", { ascending: false }),
+      client.from("savings_breakdown").select("*").eq("user_id", user.id).order("year", { ascending: false }).order("month", { ascending: false }),
+      client.from("recurring_transactions").select("*").eq("user_id", user.id).eq("type", "expense").order("next_run", { ascending: true })
     ]);
 
     if (profileRes.data) setProfile(profileRes.data as Profile);
@@ -277,14 +277,14 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     void saveSavingsRecord(manualAmount, previous.month, previous.year, true).then(refresh);
   }, [client, loading, refresh, saveSavingsRecord, savings, savingsSchemaReady, userId]);
 
-  async function mutate<T extends { id: string }>(table: string, value: Partial<T>, label: string) {
+  const mutate = useCallback(async <T extends { id: string }>(table: string, value: Partial<T>, label: string) => {
     if (!client || !userId) {
       toast.info("Connect Supabase to save live data. Demo data is active.");
       return;
     }
     const payload = { ...value, user_id: userId };
     const query = value.id
-      ? client.from(table).update(payload).eq("id", value.id)
+      ? client.from(table).update(payload).eq("id", value.id).eq("user_id", userId)
       : client.from(table).insert(payload);
     const { error } = await query;
     if (error) {
@@ -293,7 +293,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     }
     toast.success(label);
     await refresh();
-  }
+  }, [client, refresh, userId]);
 
   const value = useMemo<FinanceContextValue>(() => ({
     userId,
@@ -310,9 +310,13 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     refresh,
     saveWallet: (wallet) => mutate<Wallet>("wallets", wallet, "Wallet saved"),
     deleteWallet: async (id) => {
-      if (!client) return;
-      const { error } = await client.from("wallets").delete().eq("id", id);
-      error ? toast.error(error.message) : toast.success("Wallet deleted");
+      if (!client || !userId) return;
+      const { error } = await client.from("wallets").delete().eq("id", id).eq("user_id", userId);
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Wallet deleted");
+      }
       await refresh();
     },
     transfer: async (fromId, toId, amount) => {
@@ -330,7 +334,11 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         { ...from, balance: Number(from.balance) - amount, user_id: userId },
         { ...to, balance: Number(to.balance) + amount, user_id: userId }
       ]);
-      error ? toast.error(error.message) : toast.success("Transfer complete");
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Transfer complete");
+      }
       await refresh();
     },
     saveTransaction: async (transaction) => {
@@ -348,7 +356,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       }
       const payload = { ...transaction, type: "expense", user_id: userId };
       const query = transaction.id
-        ? client.from("transactions").update(payload).eq("id", transaction.id)
+        ? client.from("transactions").update(payload).eq("id", transaction.id).eq("user_id", userId)
         : client.from("transactions").insert(payload);
       const { error } = await query;
       if (error) {
@@ -359,8 +367,8 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       await refresh();
     },
     deleteTransaction: async (id) => {
-      if (!client) return;
-      const { error } = await client.from("transactions").delete().eq("id", id);
+      if (!client || !userId) return;
+      const { error } = await client.from("transactions").delete().eq("id", id).eq("user_id", userId);
       if (error) {
         toast.error(error.message);
         return;
@@ -407,9 +415,13 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       await refresh();
     },
     deleteBudget: async (id) => {
-      if (!client) return;
-      const { error } = await client.from("budgets").delete().eq("id", id);
-      error ? toast.error(error.message) : toast.success("Budget deleted");
+      if (!client || !userId) return;
+      const { error } = await client.from("budgets").delete().eq("id", id).eq("user_id", userId);
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Budget deleted");
+      }
       await refresh();
     },
     saveMonthlySavings: async (amount, month, year) => {
@@ -472,8 +484,8 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       }
       const existing = savings.find((item) => item.month === month && item.year === year);
       await saveSavingsRecord(existing?.monthly_savings ?? 0, month, year, true);
-      if (client && wallets.length) {
-        await Promise.all(wallets.map((wallet) => client.from("wallets").update({ balance: 0 }).eq("id", wallet.id)));
+      if (client && userId && wallets.length) {
+        await Promise.all(wallets.map((wallet) => client.from("wallets").update({ balance: 0 }).eq("id", wallet.id).eq("user_id", userId)));
         const range = monthDateRange(month, year);
         await client
           .from("transactions")
@@ -491,18 +503,26 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     },
     saveRecurring: (item) => mutate<RecurringTransaction>("recurring_transactions", { ...item, type: "expense" }, "Recurring item saved"),
     deleteRecurring: async (id) => {
-      if (!client) return;
-      const { error } = await client.from("recurring_transactions").delete().eq("id", id);
-      error ? toast.error(error.message) : toast.success("Recurring item deleted");
+      if (!client || !userId) return;
+      const { error } = await client.from("recurring_transactions").delete().eq("id", id).eq("user_id", userId);
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Recurring item deleted");
+      }
       await refresh();
     },
     updateProfile: async (profileUpdate) => {
       if (!client || !userId) return;
       const { error } = await client.from("profiles").update(profileUpdate).eq("id", userId);
-      error ? toast.error(error.message) : toast.success("Profile updated");
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Profile updated");
+      }
       await refresh();
     }
-  }), [budgets, client, currency, loading, profile, recurring, refresh, saveSavingsRecord, savings, savingsBreakdowns, savingsSchemaReady, transactions, userId, wallets]);
+  }), [budgets, client, currency, loading, mutate, profile, recurring, refresh, saveSavingsRecord, savings, savingsBreakdowns, savingsSchemaReady, transactions, userId, wallets]);
 
   return <FinanceContext.Provider value={value}>{children}</FinanceContext.Provider>;
 }

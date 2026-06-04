@@ -32,7 +32,11 @@ export default function SettingsPage() {
     }
     try {
       const { error } = await createSupabaseBrowserClient().auth.updateUser({ password });
-      error ? toast.error(error.message) : toast.success("Password updated");
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Password updated");
+      }
       setPassword("");
     } catch {
       toast.error("Connect Supabase to update passwords.");

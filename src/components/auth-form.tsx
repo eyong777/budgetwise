@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Heart, PiggyBank } from "lucide-react";
@@ -70,7 +71,11 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
         redirectTo: `${window.location.origin}/app/settings`
       });
-      error ? toast.error(error.message) : toast.success("Password reset email sent");
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Password reset email sent");
+      }
       return;
     }
 
@@ -113,14 +118,18 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             </div>
 
             <div className="relative min-h-[360px] sm:min-h-[420px] lg:min-h-[520px]">
-              <img
+              <Image
                 src={loginPhotos[0]}
                 alt=""
+                width={320}
+                height={470}
                 className="absolute right-0 top-0 h-[330px] w-[250px] rounded-lg object-cover object-[center_72%] shadow-soft sm:h-[390px] sm:w-[300px] lg:h-[470px] lg:w-[320px]"
               />
-              <img
+              <Image
                 src={loginPhotos[1]}
                 alt=""
+                width={288}
+                height={240}
                 className="absolute bottom-0 left-0 h-44 w-60 rounded-lg border-4 border-paper object-cover object-[center_72%] shadow-soft dark:border-[#101412] sm:h-56 sm:w-72 lg:h-60 lg:w-72"
               />
               <div className="absolute right-0 top-64 grid size-14 place-items-center rounded-full bg-coral text-white shadow-soft sm:top-80 lg:top-72">
