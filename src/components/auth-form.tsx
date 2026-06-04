@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Heart, PiggyBank } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import type { FieldErrors } from "react-hook-form";
 import { toast, Toaster } from "sonner";
@@ -29,8 +29,9 @@ const loginPhotos = [
 
 export function AuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
-  const isRegister = mode === "register";
-  const isForgot = mode === "forgot";
+  const [authMode, setAuthMode] = useState<AuthMode>(mode);
+  const isRegister = authMode === "register";
+  const isForgot = authMode === "forgot";
   const schema = isForgot
     ? authSchema.pick({ email: true })
     : isRegister
@@ -40,6 +41,10 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     resolver: zodResolver(schema as typeof authSchema),
     defaultValues: { email: "", password: "", fullName: undefined }
   });
+
+  useEffect(() => {
+    setAuthMode(mode);
+  }, [mode]);
 
   useEffect(() => {
     if (isForgot) return;
@@ -80,6 +85,11 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       } else {
         toast.success("Password reset email sent");
       }
+      return;
+    }
+
+    if (isRegister && (values.fullName?.trim().length ?? 0) < 2) {
+      toast.error("Full name must be at least 2 characters.");
       return;
     }
 
@@ -188,7 +198,10 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
               type="button"
               variant="secondary"
               className="mt-3 h-11 w-full"
-              onClick={() => router.push("/register")}
+              onClick={() => {
+                setAuthMode("register");
+                form.reset({ email: "", password: "", fullName: "" });
+              }}
             >
               Create account
             </Button>
@@ -197,9 +210,16 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
             {!isRegister && !isForgot && <Link href="/forgot-password" className="font-semibold text-mint">Forgot password?</Link>}
             {isRegister && (
-              <Link href="/login" className="rounded-md px-3 py-2 font-semibold text-mint hover:bg-mint/10">
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthMode("login");
+                  form.reset({ email: "", password: "", fullName: undefined });
+                }}
+                className="rounded-md px-3 py-2 font-semibold text-mint hover:bg-mint/10"
+              >
                 Already have an account? Log in
-              </Link>
+              </button>
             )}
           </div>
         </form>
