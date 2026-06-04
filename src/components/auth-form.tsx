@@ -18,6 +18,10 @@ import { Field } from "./ui/field";
 type AuthMode = "login" | "register" | "forgot";
 type AuthValues = z.infer<typeof authSchema>;
 
+const registerSchema = authSchema.extend({
+  fullName: z.string().trim().min(2, "Full name must be at least 2 characters.")
+});
+
 const loginPhotos = [
   "/login-photos/login-main.jpg",
   "/login-photos/login-secondary.jpg"
@@ -30,7 +34,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   const schema = isForgot
     ? authSchema.pick({ email: true })
     : isRegister
-      ? authSchema
+      ? registerSchema
       : authSchema.pick({ email: true, password: true });
   const form = useForm<AuthValues>({
     resolver: zodResolver(schema as typeof authSchema),
@@ -81,14 +85,20 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
     const result = isRegister
       ? await supabase.auth.signUp({
-          email: values.email,
+          email: values.email.trim(),
           password: values.password,
-          options: { data: { full_name: values.fullName } }
+          options: { data: { full_name: values.fullName?.trim() } }
         })
-      : await supabase.auth.signInWithPassword({ email: values.email, password: values.password });
+      : await supabase.auth.signInWithPassword({ email: values.email.trim(), password: values.password });
 
     if (result.error) {
       toast.error(result.error.message);
+      return;
+    }
+
+    if (isRegister && !result.data.session) {
+      toast.success("Account created. Please check your email if confirmation is enabled.");
+      router.replace("/login");
       return;
     }
 
@@ -175,7 +185,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
             {!isRegister && !isForgot && <Link href="/forgot-password" className="font-semibold text-mint">Forgot password?</Link>}
-            <Link href={isRegister ? "/login" : "/register"} className="font-semibold text-ink/70 dark:text-white/70">
+            <Link href={isRegister ? "/login" : "/register"} className="rounded-md px-3 py-2 font-semibold text-mint hover:bg-mint/10">
               {isRegister ? "Already have an account? Log in" : "Create account"}
             </Link>
           </div>
