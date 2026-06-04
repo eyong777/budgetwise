@@ -12,7 +12,8 @@ const config: Config = {
         paper: "#f7f8f4"
       },
       boxShadow: {
-        soft: "0 16px 48px rgba(23, 32, 26, 0.10)"
+        soft: "0 22px 70px rgba(23, 32, 26, 0.12)",
+        glow: "0 18px 44px rgba(40, 168, 107, 0.18)"
       }
     }
   },

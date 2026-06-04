@@ -11,7 +11,7 @@ export function Field({
       {label}
       <input
         className={cn(
-          "h-10 w-full min-w-0 rounded-md border border-white/60 bg-white/65 px-3 text-sm text-ink outline-none backdrop-blur transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
+          "h-10 w-full min-w-0 rounded-lg border border-white/70 bg-white/75 px-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] outline-none backdrop-blur-xl transition duration-300 placeholder:text-ink/35 focus:border-mint/55 focus:bg-white focus:shadow-[0_0_0_4px_rgba(40,168,107,0.12)] dark:border-white/10 dark:bg-white/10 dark:text-white dark:focus:bg-white/15",
           className
         )}
         {...props}
@@ -31,7 +31,7 @@ export function SelectField({
       {label}
       <select
         className={cn(
-          "h-10 w-full min-w-0 rounded-md border border-white/60 bg-white/65 px-3 text-sm text-ink outline-none backdrop-blur transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
+          "h-10 w-full min-w-0 rounded-lg border border-white/70 bg-white/75 px-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] outline-none backdrop-blur-xl transition duration-300 focus:border-mint/55 focus:bg-white focus:shadow-[0_0_0_4px_rgba(40,168,107,0.12)] dark:border-white/10 dark:bg-white/10 dark:text-white dark:focus:bg-white/15",
           className
         )}
         {...props}
@@ -52,7 +52,7 @@ export function TextAreaField({
       {label}
       <textarea
         className={cn(
-          "min-h-20 w-full min-w-0 rounded-md border border-white/60 bg-white/65 px-3 py-2 text-sm text-ink outline-none backdrop-blur transition focus:border-mint dark:border-white/10 dark:bg-white/10 dark:text-white",
+          "min-h-20 w-full min-w-0 rounded-lg border border-white/70 bg-white/75 px-3 py-2 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] outline-none backdrop-blur-xl transition duration-300 placeholder:text-ink/35 focus:border-mint/55 focus:bg-white focus:shadow-[0_0_0_4px_rgba(40,168,107,0.12)] dark:border-white/10 dark:bg-white/10 dark:text-white dark:focus:bg-white/15",
           className
         )}
         {...props}

@@ -159,8 +159,8 @@ function ShellInner({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(135deg,#f7f8f4_0%,#eef7f1_48%,#f7f8f4_100%)] text-ink dark:bg-[linear-gradient(135deg,#101412_0%,#132018_52%,#101412_100%)] dark:text-white">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-white/45 bg-white/55 p-4 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-[#121816]/70 lg:block">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_14%_0%,rgba(40,168,107,0.16),transparent_30%),linear-gradient(135deg,#f7f8f4_0%,#eef7f1_48%,#f7f8f4_100%)] text-ink dark:bg-[radial-gradient(circle_at_14%_0%,rgba(40,168,107,0.12),transparent_30%),linear-gradient(135deg,#101412_0%,#132018_52%,#101412_100%)] dark:text-white">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-white/55 bg-white/62 p-4 shadow-soft backdrop-blur-2xl dark:border-white/10 dark:bg-[#121816]/72 lg:block">
         <Link href="/app/dashboard" className="mb-8 flex items-center gap-3 px-2 pt-2">
           <span className="grid size-11 place-items-center rounded-lg bg-mint text-white">
             <PiggyBank />
@@ -179,8 +179,8 @@ function ShellInner({ children }: { children: React.ReactNode }) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-semibold text-ink/65 transition hover:bg-ink/5 dark:text-white/65 dark:hover:bg-white/10",
-                  active && "bg-mint/10 text-mint dark:text-mint"
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-ink/65 transition duration-300 hover:-translate-y-0.5 hover:bg-white/65 hover:shadow-[0_12px_30px_rgba(23,32,26,0.08)] dark:text-white/65 dark:hover:bg-white/10",
+                  active && "border border-mint/20 bg-mint/[0.12] text-mint shadow-[0_14px_36px_rgba(40,168,107,0.12)] dark:text-mint"
                 )}
               >
                 <Icon size={18} />
@@ -192,7 +192,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
       </aside>
 
       <main className="lg:pl-72">
-        <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between border-b border-white/45 bg-white/45 px-4 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-[#101412]/60 sm:px-6">
+        <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between border-b border-white/55 bg-white/55 px-4 shadow-sm backdrop-blur-2xl dark:border-white/10 dark:bg-[#101412]/62 sm:px-6">
           <div>
             <p className="text-sm text-ink/50 dark:text-white/50">Welcome back</p>
             <h1 className="text-xl font-bold">{profile?.full_name || "BudgetWise user"}</h1>
@@ -209,7 +209,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6">{children}</div>
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-white/45 bg-white/70 px-2 py-2 backdrop-blur-xl dark:border-white/10 dark:bg-[#121816]/80 lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-white/55 bg-white/78 px-2 py-2 shadow-[0_-18px_46px_rgba(23,32,26,0.10)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#121816]/82 lg:hidden">
         {links.slice(0, 8).map((item) => {
           const active = pathname === item.href;
           const Icon = item.icon;
