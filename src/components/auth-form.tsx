@@ -107,6 +107,9 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     }
 
     if (isRegister) {
+      if (result.data.session) {
+        await supabase.auth.signOut();
+      }
       toast.success(result.data.session ? "Account created. Please log in." : "Account created. Please check your email if confirmation is enabled.");
       setAuthMode("login");
       form.reset({ email: values.email.trim(), password: "", fullName: undefined });
