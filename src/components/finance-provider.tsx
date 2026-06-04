@@ -14,6 +14,12 @@ type BreakdownItem = {
   amount: number;
 };
 
+type SalaryAllocationSummary = {
+  salaryAmount: number;
+  budgetReservedAmount: number;
+  savingsAmount: number;
+};
+
 type FinanceContextValue = {
   userId: string | null;
   profile: Profile | null;
@@ -23,9 +29,11 @@ type FinanceContextValue = {
   savings: MonthlySaving[];
   savingsBreakdowns: SavingsBreakdown[];
   recurring: RecurringTransaction[];
+  salaryAllocation: SalaryAllocationSummary | null;
   loading: boolean;
   currency: string;
   setCurrency: (currency: string) => void;
+  dismissSalaryAllocation: () => void;
   refresh: () => Promise<void>;
   saveWallet: (wallet: Partial<Wallet>) => Promise<void>;
   deleteWallet: (id: string) => Promise<void>;
@@ -116,6 +124,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const [savings, setSavings] = useState<MonthlySaving[]>([]);
   const [savingsBreakdowns, setSavingsBreakdowns] = useState<SavingsBreakdown[]>([]);
   const [recurring, setRecurring] = useState<RecurringTransaction[]>([]);
+  const [salaryAllocation, setSalaryAllocation] = useState<SalaryAllocationSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [currency, setCurrency] = useState("AED");
   const [client, setClient] = useState<ReturnType<typeof createSupabaseBrowserClient> | null>(null);
@@ -317,9 +326,11 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     savings,
     savingsBreakdowns,
     recurring,
+    salaryAllocation,
     loading,
     currency,
     setCurrency,
+    dismissSalaryAllocation: () => setSalaryAllocation(null),
     refresh,
     saveWallet: async (wallet) => {
       const active = monthKey();
@@ -328,6 +339,11 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         .reduce((sum, budget) => sum + Number(budget.limit_amount), 0);
       const savingsAmount = Math.max(0, salaryAmount - monthlyBudgetAmount);
       const walletSpendingAmount = salaryAmount > monthlyBudgetAmount ? monthlyBudgetAmount : salaryAmount;
+      const allocationSummary = {
+        salaryAmount,
+        budgetReservedAmount: walletSpendingAmount,
+        savingsAmount
+      };
       const walletPayload = { ...wallet, balance: walletSpendingAmount };
 
       if (!client || !userId) {
@@ -342,7 +358,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
 
         setWallets(nextWallets);
         await saveSavingsRecord(savingsAmount, active.month, active.year, false, nextWallets);
-        toast.success(savingsAmount > 0 ? "Wallet saved and salary remainder moved to savings" : "Wallet saved");
+        setSalaryAllocation(allocationSummary);
         return;
       }
 
@@ -363,7 +379,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         : [savedWallet, ...wallets];
 
       await saveSavingsRecord(savingsAmount, active.month, active.year, false, nextWallets);
-      toast.success(savingsAmount > 0 ? "Wallet saved and salary remainder moved to savings" : "Wallet saved");
+      setSalaryAllocation(allocationSummary);
       await refresh();
     },
     deleteWallet: async (id) => {
@@ -579,7 +595,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       }
       await refresh();
     }
-  }), [budgets, client, currency, loading, mutate, profile, recurring, refresh, saveSavingsRecord, savings, savingsBreakdowns, savingsSchemaReady, transactions, userId, wallets]);
+  }), [budgets, client, currency, loading, mutate, profile, recurring, refresh, salaryAllocation, saveSavingsRecord, savings, savingsBreakdowns, savingsSchemaReady, transactions, userId, wallets]);
 
   return <FinanceContext.Provider value={value}>{children}</FinanceContext.Provider>;
 }

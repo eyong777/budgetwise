@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   BarChart3,
   Bell,
+  CheckCircle2,
   CreditCard,
   LayoutDashboard,
   LogOut,
@@ -18,7 +19,8 @@ import {
 import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
-import { cn } from "@/lib/utils";
+import type { Currency } from "@/lib/types";
+import { cn, money } from "@/lib/utils";
 import { FinanceProvider, useFinance } from "./finance-provider";
 import { Button } from "./ui/button";
 
@@ -39,8 +41,9 @@ const LAST_ACTIVITY_KEY = "budgetwise-last-activity";
 function ShellInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { loading, profile } = useFinance();
+  const { currency, dismissSalaryAllocation, loading, profile, salaryAllocation } = useFinance();
   const [dark, setDark] = useState(false);
+  const activeCurrency = currency as Currency;
 
   useEffect(() => {
     const stored = localStorage.getItem("budgetwise-theme");
@@ -184,6 +187,51 @@ function ShellInner({ children }: { children: React.ReactNode }) {
           );
         })}
       </nav>
+      {salaryAllocation ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-[#020711]/70 px-4 backdrop-blur-md">
+          <div className="w-full max-w-lg rounded-xl border border-mint/35 bg-[#07111d]/90 p-5 text-white shadow-[0_0_70px_rgba(40,168,107,0.28)] backdrop-blur-2xl sm:p-6">
+            <div className="flex items-start gap-4">
+              <span className="grid size-14 shrink-0 place-items-center rounded-xl border border-mint/35 bg-mint/15 text-mint shadow-[0_0_28px_rgba(40,168,107,0.35)]">
+                <CheckCircle2 size={30} />
+              </span>
+              <div>
+                <h2 className="text-2xl font-black leading-tight">✅ Salary Allocated Successfully</h2>
+                <p className="mt-2 text-sm leading-6 text-white/70">
+                  Your salary has been processed automatically.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5 space-y-3 rounded-lg border border-white/10 bg-white/[0.06] p-4 text-sm leading-6 text-white/78">
+              <p>{money(salaryAllocation.budgetReservedAmount, activeCurrency)} has been reserved for this month&apos;s budget.</p>
+              <p>{money(salaryAllocation.savingsAmount, activeCurrency)} has been automatically transferred to Savings.</p>
+              <p>All remaining funds have been secured in Savings.</p>
+            </div>
+
+            <div className="mt-5 rounded-lg border border-cyan-300/20 bg-cyan-300/[0.06] p-4">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200/80">Summary</p>
+              <div className="mt-3 grid gap-2 text-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-white/65">Salary Added</span>
+                  <strong>{money(salaryAllocation.salaryAmount, activeCurrency)}</strong>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-white/65">Budget Reserved</span>
+                  <strong>{money(salaryAllocation.budgetReservedAmount, activeCurrency)}</strong>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-white/65">Moved to Savings</span>
+                  <strong className="text-mint">{money(salaryAllocation.savingsAmount, activeCurrency)}</strong>
+                </div>
+              </div>
+            </div>
+
+            <Button className="mt-5 h-12 w-full border border-mint/40 bg-mint text-base font-bold text-white shadow-[0_0_30px_rgba(40,168,107,0.28)] hover:bg-mint/90" onClick={dismissSalaryAllocation}>
+              OK
+            </Button>
+          </div>
+        </div>
+      ) : null}
       <Toaster richColors position="top-right" />
     </div>
   );
