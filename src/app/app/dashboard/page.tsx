@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDownRight, CreditCard, ReceiptText, Wallet } from "lucide-react";
+import { ArrowDownRight, Wallet } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useFinance, useMonthlyStats } from "@/components/finance-provider";
@@ -38,7 +38,6 @@ export default function DashboardPage() {
   const latest = transactions.slice(0, 5);
   const currentBudgets = getSyncedBudgets(budgets, stats.month, stats.year);
   const monthlyBudget = currentBudgets.reduce((sum, budget) => sum + Number(budget.limit_amount), 0);
-  const budgetProgress = monthlyBudget > 0 ? (stats.monthlyExpenses / monthlyBudget) * 100 : 0;
   const budgetRows = currentBudgets.map((budget) => {
     const spent = transactions
       .filter((item) => item.type === "expense" && item.category === budget.category)
@@ -59,31 +58,30 @@ export default function DashboardPage() {
     <div className="grid gap-6">
       <section>
         <Card className="overflow-hidden p-0">
-          <div className="bg-ink p-5 text-white dark:bg-white dark:text-ink sm:p-7">
-            <div className="flex flex-wrap items-start justify-between gap-5">
-              <div className="min-w-0">
-                <p className="text-sm font-semibold opacity-70">Available Balance</p>
-                <h2 className="mt-3 break-words text-4xl font-black tracking-normal sm:text-5xl">{money(stats.walletBalance, activeCurrency)}</h2>
-                <p className="mt-3 max-w-xl text-sm opacity-65">Money available after protected savings and this month&apos;s expenses.</p>
+          <div className="bg-ink p-6 text-white dark:bg-white dark:text-ink">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm opacity-70">Available Balance</p>
+                <h2 className="mt-3 text-4xl font-black tracking-normal sm:text-5xl">{money(stats.walletBalance, activeCurrency)}</h2>
               </div>
-              <span className="grid size-14 shrink-0 place-items-center rounded-lg bg-white/10 dark:bg-ink/10">
+              <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-white/10 dark:bg-ink/10">
                 <Wallet />
               </span>
             </div>
           </div>
           <div className="grid gap-3 p-4 sm:grid-cols-2">
-            <MiniMetric icon={CreditCard} label="Monthly Budget" value={money(monthlyBudget, activeCurrency)} />
-            <MiniMetric icon={ReceiptText} label="Expenses This Month" value={money(stats.monthlyExpenses, activeCurrency)} tone="red" />
+            <MiniMetric label="Monthly Budget" value={money(monthlyBudget, activeCurrency)} />
+            <MiniMetric label="Expenses This Month" value={money(stats.monthlyExpenses, activeCurrency)} tone="red" />
           </div>
         </Card>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1fr_380px]">
+      <section>
         <Card>
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-bold">Budget Health</h2>
-              <p className="text-sm text-ink/55 dark:text-white/55">Category limits and how much room is left.</p>
+              <p className="text-sm text-ink/55 dark:text-white/55">Monthly category limits with spending progress.</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <span className="rounded-md bg-mint/10 px-3 py-2 text-sm font-bold text-mint">
@@ -97,18 +95,10 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="mb-5 rounded-md border border-white/55 bg-white/45 p-4 backdrop-blur dark:border-white/10 dark:bg-white/[0.06]">
-            <div className="mb-2 flex items-center justify-between gap-3 text-sm">
-              <span className="font-semibold text-ink/65 dark:text-white/65">Overall budget use</span>
-              <span className={budgetProgress > 100 ? "font-bold text-coral" : "font-bold text-mint"}>{Math.round(budgetProgress)}%</span>
-            </div>
-            <Progress value={budgetProgress} alert={budgetProgress > 100} />
-          </div>
-
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {budgetRows.map((budget) => {
               return (
-                <div key={budget.id} className="rounded-md border border-white/55 bg-white/45 p-4 shadow-sm backdrop-blur transition hover:bg-white/65 dark:border-white/10 dark:bg-white/[0.06] dark:hover:bg-white/[0.1]">
+                <div key={budget.id} className="rounded-md border border-white/55 bg-white/45 p-4 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/[0.06]">
                   <div className="mb-3 flex items-start justify-between gap-3">
                     <div>
                       <p className="font-bold capitalize">{budget.category}</p>
@@ -143,7 +133,9 @@ export default function DashboardPage() {
             )}
           </div>
         </Card>
+      </section>
 
+      <section>
         <Card>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-bold">Recent Expenses</h2>
@@ -171,16 +163,11 @@ export default function DashboardPage() {
   );
 }
 
-function MiniMetric({ icon: Icon, label, value, tone = "default" }: { icon: typeof Wallet; label: string; value: string; tone?: "default" | "green" | "red" }) {
+function MiniMetric({ label, value, tone = "default" }: { label: string; value: string; tone?: "default" | "green" | "red" }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-md border border-ink/10 bg-white/35 p-4 dark:border-white/10 dark:bg-white/[0.04]">
-      <div>
-        <p className="text-sm text-ink/55 dark:text-white/55">{label}</p>
-        <p className={tone === "green" ? "mt-1 text-xl font-black text-mint" : tone === "red" ? "mt-1 text-xl font-black text-coral" : "mt-1 text-xl font-black"}>{value}</p>
-      </div>
-      <span className={tone === "red" ? "grid size-10 shrink-0 place-items-center rounded-md bg-coral/10 text-coral" : "grid size-10 shrink-0 place-items-center rounded-md bg-mint/10 text-mint"}>
-        <Icon size={18} />
-      </span>
+    <div className="rounded-md border border-ink/10 p-4 dark:border-white/10">
+      <p className="text-sm text-ink/55 dark:text-white/55">{label}</p>
+      <p className={tone === "green" ? "mt-1 text-xl font-black text-mint" : tone === "red" ? "mt-1 text-xl font-black text-coral" : "mt-1 text-xl font-black"}>{value}</p>
     </div>
   );
 }
