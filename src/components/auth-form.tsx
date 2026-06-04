@@ -106,13 +106,14 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       return;
     }
 
-    if (isRegister && !result.data.session) {
-      toast.success("Account created. Please check your email if confirmation is enabled.");
-      router.replace("/login");
+    if (isRegister) {
+      toast.success(result.data.session ? "Account created. Please log in." : "Account created. Please check your email if confirmation is enabled.");
+      setAuthMode("login");
+      form.reset({ email: values.email.trim(), password: "", fullName: undefined });
       return;
     }
 
-    toast.success(isRegister ? "Account created" : "Logged in");
+    toast.success("Logged in");
     router.refresh();
     window.location.assign("/app/dashboard");
   }
