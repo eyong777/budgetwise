@@ -183,11 +183,22 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             {form.formState.isSubmitting ? "Working..." : isForgot ? "Send recovery link" : isRegister ? "Create BudgetWise account" : "Log in"}
           </Button>
 
+          {!isRegister && !isForgot && (
+            <Link
+              href="/register"
+              className="mt-3 flex h-11 w-full items-center justify-center rounded-md border border-ink/10 bg-white text-sm font-bold text-ink transition hover:bg-ink/5 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+            >
+              Create account
+            </Link>
+          )}
+
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
             {!isRegister && !isForgot && <Link href="/forgot-password" className="font-semibold text-mint">Forgot password?</Link>}
-            <Link href={isRegister ? "/login" : "/register"} className="rounded-md px-3 py-2 font-semibold text-mint hover:bg-mint/10">
-              {isRegister ? "Already have an account? Log in" : "Create account"}
-            </Link>
+            {isRegister && (
+              <Link href="/login" className="rounded-md px-3 py-2 font-semibold text-mint hover:bg-mint/10">
+                Already have an account? Log in
+              </Link>
+            )}
           </div>
         </form>
       </div>
