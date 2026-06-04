@@ -240,7 +240,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
         >
           <div className="grid justify-items-center gap-3 rounded-2xl border border-white/70 bg-white/42 px-8 py-7 shadow-[0_24px_80px_rgba(23,32,26,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.08]">
             <div className="budgetwise-spinner" aria-hidden="true" />
-            <p className="text-sm font-bold text-ink/65 dark:text-white/70">Loading BudgetWise</p>
+            <p className="text-sm font-bold text-ink/65 dark:text-white/70">Loading</p>
           </div>
         </div>
       ) : null}
