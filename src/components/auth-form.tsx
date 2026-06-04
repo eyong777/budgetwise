@@ -128,7 +128,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
           <div className="relative z-10 mt-10 max-w-xl lg:mt-16">
             <h1 className="text-4xl font-black leading-tight sm:text-5xl lg:text-[4.2rem]">
-              budget <span className="text-mint">ta noy!</span>
+              Budget <span className="text-mint">ta noy!</span>
             </h1>
             <p className="mt-5 max-w-lg text-lg leading-8 text-ink/65 dark:text-white/65">
               BudgetWise keeps your wallet, budgets, expenses, and savings easy to follow every month.
