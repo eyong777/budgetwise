@@ -69,8 +69,7 @@ export default function DashboardPage() {
               </span>
             </div>
           </div>
-          <div className="grid gap-3 p-4 sm:grid-cols-3">
-            <MiniMetric label="Mandatory Monthly Savings" value={money(stats.monthlySavings, activeCurrency)} tone="green" />
+          <div className="grid gap-3 p-4 sm:grid-cols-2">
             <MiniMetric label="Monthly Budget" value={money(monthlyBudget, activeCurrency)} />
             <MiniMetric label="Expenses This Month" value={money(stats.monthlyExpenses, activeCurrency)} tone="red" />
           </div>
