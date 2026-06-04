@@ -151,7 +151,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       .filter((item) => sameMonth(item.date, month, year))
       .reduce((sum, item) => sum + Number(item.amount), 0);
     const walletAmount = walletSnapshot.reduce((sum, wallet) => sum + Number(wallet.balance), 0);
-    const leftoverWallet = Math.max(0, walletAmount - Number(manualAmount) - expenses);
+    const leftoverWallet = Math.max(0, walletAmount - expenses);
     const totalSaved = Number(manualAmount) + leftoverWallet;
     const fullBreakdown = [
       ...breakdown,
@@ -327,7 +327,8 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       const monthlyBudgetAmount = uniqueBudgetsForMonth(budgets, active.month, active.year)
         .reduce((sum, budget) => sum + Number(budget.limit_amount), 0);
       const savingsAmount = Math.max(0, salaryAmount - monthlyBudgetAmount);
-      const walletPayload = { ...wallet, balance: salaryAmount };
+      const walletSpendingAmount = salaryAmount > monthlyBudgetAmount ? monthlyBudgetAmount : salaryAmount;
+      const walletPayload = { ...wallet, balance: walletSpendingAmount };
 
       if (!client || !userId) {
         const nextWallet = {
@@ -624,7 +625,7 @@ export function getMonthlySavingsStats(
   const monthlyExpenses = transactions
     .filter((item) => sameMonth(item.date, month, year))
     .reduce((sum, item) => sum + Number(item.amount), 0);
-  const walletBalance = Math.max(0, walletAmount - monthlySavings - monthlyExpenses);
+  const walletBalance = Math.max(0, walletAmount - monthlyExpenses);
   const leftoverWallet = currentSavings?.closed_at ? Number(currentSavings.leftover_wallet ?? 0) : walletBalance;
   const totalSavedThisMonth = monthlySavings + leftoverWallet;
   const closedSavingsTotal = savings
