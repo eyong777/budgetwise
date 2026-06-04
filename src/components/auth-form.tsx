@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Heart, PiggyBank } from "lucide-react";
+import { PiggyBank } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import type { FieldErrors } from "react-hook-form";
@@ -21,11 +20,6 @@ type AuthValues = z.infer<typeof authSchema>;
 const registerSchema = authSchema.extend({
   fullName: z.string().trim().min(2, "Full name must be at least 2 characters.")
 });
-
-const loginPhotos = [
-  "/login-photos/login-main.jpg",
-  "/login-photos/login-secondary.jpg"
-];
 
 export function AuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
@@ -132,38 +126,16 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             <span className="text-2xl font-bold">BudgetWise</span>
           </Link>
 
-          <div className="mt-10 grid gap-8 lg:mt-16 lg:grid-cols-[320px_1fr] lg:items-center">
-            <div className="relative z-10 max-w-[360px]">
-              <h1 className="text-4xl font-black leading-tight sm:text-5xl lg:text-[4rem]">
-                Build the life <span className="text-mint">you love.</span>
-              </h1>
-              <p className="mt-5 text-lg leading-8 text-ink/65 dark:text-white/65">
-                BudgetWise keeps your money clear, personal, and easy to follow every month.
-              </p>
-            </div>
-
-            <div className="relative min-h-[360px] sm:min-h-[420px] lg:min-h-[520px]">
-              <Image
-                src={loginPhotos[0]}
-                alt=""
-                width={320}
-                height={470}
-                className="absolute right-0 top-0 h-[330px] w-[250px] rounded-lg object-cover object-[center_72%] shadow-soft sm:h-[390px] sm:w-[300px] lg:h-[470px] lg:w-[320px]"
-              />
-              <Image
-                src={loginPhotos[1]}
-                alt=""
-                width={288}
-                height={240}
-                className="absolute bottom-0 left-0 h-44 w-60 rounded-lg border-4 border-paper object-cover object-[center_72%] shadow-soft dark:border-[#101412] sm:h-56 sm:w-72 lg:h-60 lg:w-72"
-              />
-              <div className="absolute right-0 top-64 grid size-14 place-items-center rounded-full bg-coral text-white shadow-soft sm:top-80 lg:top-72">
-                <Heart fill="currentColor" size={24} />
-              </div>
-              <div className="absolute left-4 top-6 max-w-56 rounded-lg border border-white/50 bg-white/70 px-4 py-3 text-sm font-bold shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-[#18201c]/80 sm:left-10">
-                Memories worth budgeting for
-              </div>
-            </div>
+          <div className="relative z-10 mt-10 max-w-xl lg:mt-16">
+            <p className="mb-4 inline-flex rounded-full bg-mint/10 px-4 py-2 text-sm font-bold text-mint">
+              Personal finance made clear
+            </p>
+            <h1 className="text-4xl font-black leading-tight sm:text-5xl lg:text-[4.2rem]">
+              Build the life <span className="text-mint">you love.</span>
+            </h1>
+            <p className="mt-5 max-w-lg text-lg leading-8 text-ink/65 dark:text-white/65">
+              BudgetWise keeps your wallet, budgets, expenses, and savings easy to follow every month.
+            </p>
           </div>
         </div>
 

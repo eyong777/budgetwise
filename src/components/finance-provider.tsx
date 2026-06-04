@@ -301,7 +301,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
 
   const mutate = useCallback(async <T extends { id: string }>(table: string, value: Partial<T>, label: string) => {
     if (!client || !userId) {
-      toast.error("Please log in again before saving changes.");
+      toast.info("Connect Supabase to save live data. Demo data is active.");
       return;
     }
     const payload = { ...value, user_id: userId };
@@ -400,7 +400,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       if (!client || !userId) {
-        toast.error("Please log in again before transferring money.");
+        toast.info("Transfers save after Supabase is connected.");
         return;
       }
       const { error } = await client.from("wallets").upsert([
@@ -416,7 +416,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     },
     saveTransaction: async (transaction) => {
       if (!client || !userId) {
-        toast.error("Please log in again before saving expenses.");
+        toast.info("Connect Supabase to save live data. Demo data is active.");
         return;
       }
       const stats = getMonthlySavingsStats(wallets, transactions, budgets, savings, savingsBreakdowns);
