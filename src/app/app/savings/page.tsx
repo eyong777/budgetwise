@@ -145,12 +145,29 @@ export default function SavingsPage() {
                 <SummaryLine label="Total Saved" value={money(item.total_saved, activeCurrency)} strong />
               </div>
               <div className="mt-4 grid gap-2 md:grid-cols-2 lg:grid-cols-4">
-                {breakdown.map((part) => (
-                  <div key={part.id} className="rounded-md bg-ink/[0.03] p-3 text-sm dark:bg-white/[0.06]">
-                    <p className="capitalize text-ink/55 dark:text-white/55">{part.category}</p>
-                    <p className="font-bold">{money(part.amount, activeCurrency)}</p>
-                  </div>
-                ))}
+                {breakdown.map((part) => {
+                  const amount = Number(part.amount);
+                  const isLeftoverWallet = part.category.toLowerCase().includes("leftover wallet");
+                  const isFullyUtilized = amount <= 0 && !isLeftoverWallet;
+
+                  return (
+                    <div
+                      key={part.id}
+                      className={isFullyUtilized
+                        ? "rounded-md border border-coral/20 bg-coral/10 p-3 text-sm"
+                        : "rounded-md border border-mint/20 bg-mint/10 p-3 text-sm"
+                      }
+                    >
+                      <p className="capitalize text-ink/55 dark:text-white/55">{part.category}</p>
+                      <p className={isFullyUtilized ? "mt-1 font-bold text-coral" : "mt-1 font-bold text-mint"}>
+                        {isFullyUtilized ? "Fully Utilized Budget" : "Unused / Not Fully Utilized Budget"}
+                      </p>
+                      <p className={isFullyUtilized ? "mt-1 text-lg font-black text-coral" : "mt-1 text-lg font-black text-mint"}>
+                        {money(amount, activeCurrency)}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             </Card>
           );
