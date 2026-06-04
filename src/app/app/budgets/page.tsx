@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -44,6 +44,7 @@ export default function BudgetsPage() {
   const { budgets, transactions, saveBudget, deleteBudget, currency } = useFinance();
   const activeCurrency = currency as Currency;
   const [editing, setEditing] = useState<Budget | null>(null);
+  const formCardRef = useRef<HTMLDivElement | null>(null);
   const now = monthKey();
   const currentBudgets = getSyncedBudgets(budgets, now.month, now.year);
   const form = useForm<Values>({ resolver: zodResolver(budgetSchema), defaultValues: { category: "food", limit_amount: 0, month: now.month, year: now.year } });
@@ -56,20 +57,22 @@ export default function BudgetsPage() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[430px_1fr]">
-      <Card>
-        <h2 className="mb-4 text-lg font-bold">{editing ? "Edit budget" : "Create monthly budget"}</h2>
-        <form onSubmit={form.handleSubmit(submit)} className="grid gap-4">
-          <SelectField label="Category" {...form.register("category")}>
-            {expenseCategories.map((item) => <option key={item} value={item}>{item}</option>)}
-          </SelectField>
-          <Field label="Limit amount" type="number" step="0.01" {...form.register("limit_amount")} />
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Month" type="number" className="min-w-0 w-full" {...form.register("month")} />
-            <Field label="Year" type="number" className="min-w-0 w-full" {...form.register("year")} />
-          </div>
-          <Button>{editing ? "Save budget" : "Add budget"}</Button>
-        </form>
-      </Card>
+      <div ref={formCardRef}>
+        <Card>
+          <h2 className="mb-4 text-lg font-bold">{editing ? "Edit budget" : "Create monthly budget"}</h2>
+          <form onSubmit={form.handleSubmit(submit)} className="grid gap-4">
+            <SelectField label="Category" {...form.register("category")}>
+              {expenseCategories.map((item) => <option key={item} value={item}>{item}</option>)}
+            </SelectField>
+            <Field label="Limit amount" type="number" step="0.01" {...form.register("limit_amount")} />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Month" type="number" className="min-w-0 w-full" {...form.register("month")} />
+              <Field label="Year" type="number" className="min-w-0 w-full" {...form.register("year")} />
+            </div>
+            <Button>{editing ? "Save budget" : "Add budget"}</Button>
+          </form>
+        </Card>
+      </div>
 
       <div className="grid gap-4">
         {currentBudgets.map((budget) => {
@@ -102,6 +105,12 @@ export default function BudgetsPage() {
                         month: Number(budget.month),
                         year: Number(budget.year)
                       });
+                      window.setTimeout(() => {
+                        formCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        const amountInput = document.querySelector<HTMLInputElement>("input[name='limit_amount']");
+                        amountInput?.focus();
+                        amountInput?.select();
+                      }, 0);
                     }}
                   >
                     <Pencil size={16} />
