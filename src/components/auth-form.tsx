@@ -184,12 +184,14 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           </Button>
 
           {!isRegister && !isForgot && (
-            <Link
-              href="/register"
-              className="mt-3 flex h-11 w-full items-center justify-center rounded-md border border-ink/10 bg-white text-sm font-bold text-ink transition hover:bg-ink/5 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+            <Button
+              type="button"
+              variant="secondary"
+              className="mt-3 h-11 w-full"
+              onClick={() => router.push("/register")}
             >
               Create account
-            </Link>
+            </Button>
           )}
 
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
