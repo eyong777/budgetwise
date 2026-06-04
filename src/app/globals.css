@@ -15,6 +15,74 @@ body {
   background: rgba(40, 168, 107, 0.22);
 }
 
+.budgetwise-loader {
+  animation: budgetwise-loader-fade-in 360ms ease both;
+}
+
+.budgetwise-loader-done {
+  animation: budgetwise-loader-fade-out 420ms ease both;
+}
+
+.budgetwise-loader-icon {
+  animation: budgetwise-loader-bounce 1.6s ease-in-out infinite;
+}
+
+.budgetwise-loader-bar {
+  position: relative;
+  overflow: hidden;
+  transition: width 220ms ease;
+}
+
+.budgetwise-loader-bar::after {
+  animation: budgetwise-loader-shimmer 1.25s linear infinite;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  content: "";
+  inset: 0;
+  position: absolute;
+  transform: translateX(-100%);
+}
+
+@keyframes budgetwise-loader-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes budgetwise-loader-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.01);
+  }
+}
+
+@keyframes budgetwise-loader-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes budgetwise-loader-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
 .print-report table th,
 .print-report table td {
   border-bottom: 1px solid rgba(23, 32, 26, 0.12);

@@ -43,6 +43,8 @@ function ShellInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { currency, dismissSalaryAllocation, loading, profile, salaryAllocation } = useFinance();
   const [dark, setDark] = useState(false);
+  const [showLoader, setShowLoader] = useState(loading);
+  const [loadProgress, setLoadProgress] = useState(0);
   const activeCurrency = currency as Currency;
 
   useEffect(() => {
@@ -51,6 +53,27 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     setDark(enabled);
     document.documentElement.classList.toggle("dark", enabled);
   }, []);
+
+  useEffect(() => {
+    let interval: number | undefined;
+    let timeout: number | undefined;
+
+    if (loading) {
+      setShowLoader(true);
+      setLoadProgress(0);
+      interval = window.setInterval(() => {
+        setLoadProgress((current) => Math.min(current + 4, 94));
+      }, 90);
+    } else if (showLoader) {
+      setLoadProgress(100);
+      timeout = window.setTimeout(() => setShowLoader(false), 420);
+    }
+
+    return () => {
+      if (interval) window.clearInterval(interval);
+      if (timeout) window.clearTimeout(timeout);
+    };
+  }, [loading, showLoader]);
 
   function toggleDarkMode() {
     const next = !dark;
@@ -108,16 +131,27 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     };
   }, [router]);
 
-  if (loading) {
+  if (showLoader) {
     return (
-      <div className="grid min-h-screen place-items-center bg-[linear-gradient(135deg,#f7f8f4_0%,#eef7f1_48%,#f7f8f4_100%)] px-4 text-ink dark:bg-[linear-gradient(135deg,#101412_0%,#132018_52%,#101412_100%)] dark:text-white">
-        <div className="w-full max-w-sm rounded-lg border border-white/55 bg-white/60 p-6 text-center shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.08]">
-          <span className="mx-auto grid size-12 place-items-center rounded-lg bg-mint text-white">
-            <PiggyBank />
+      <div
+        className={cn(
+          "budgetwise-loader grid min-h-screen place-items-center bg-[linear-gradient(135deg,#f7f8f4_0%,#edf6f0_48%,#f7f8f4_100%)] px-4 text-ink",
+          !loading && "budgetwise-loader-done"
+        )}
+      >
+        <div className="w-full max-w-xl rounded-xl border border-white/70 bg-white/75 p-8 text-center shadow-[0_24px_80px_rgba(23,32,26,0.13)] backdrop-blur-xl sm:p-10">
+          <span className="budgetwise-loader-icon mx-auto grid size-16 place-items-center rounded-xl bg-mint text-white shadow-[0_14px_32px_rgba(40,168,107,0.28)]">
+            <PiggyBank size={34} />
           </span>
-          <h1 className="mt-4 text-xl font-bold">Loading BudgetWise</h1>
-          <div className="mt-5 h-2 overflow-hidden rounded-full bg-ink/10 dark:bg-white/10">
-            <div className="h-full w-1/2 animate-pulse rounded-full bg-mint" />
+          <h1 className="mt-7 text-3xl font-black tracking-normal sm:text-4xl">Loading BudgetWise</h1>
+          <div className="mt-7 flex items-center gap-3">
+            <div className="h-3 flex-1 overflow-hidden rounded-full bg-ink/10">
+              <div
+                className="budgetwise-loader-bar h-full rounded-full bg-mint"
+                style={{ width: `${loadProgress}%` }}
+              />
+            </div>
+            <span className="w-12 text-right text-sm font-black text-mint">{loadProgress}%</span>
           </div>
         </div>
       </div>
