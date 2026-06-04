@@ -112,9 +112,6 @@ export default function DashboardPage() {
                       <p className="font-bold capitalize">{budget.category}</p>
                       <p className="mt-1 text-xs text-ink/50 dark:text-white/50">{budget.month}/{budget.year}</p>
                     </div>
-                    <span className={budget.over ? "rounded-md bg-coral/10 px-2 py-1 text-xs font-bold text-coral" : "rounded-md bg-mint/10 px-2 py-1 text-xs font-bold text-mint"}>
-                      {budget.over ? "Over" : "Healthy"}
-                    </span>
                   </div>
                   <Progress value={budget.usage} alert={budget.over} />
                   <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
