@@ -4,7 +4,7 @@ import { ArrowDownRight, Wallet } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useFinance, useMonthlyStats } from "@/components/finance-provider";
-import { money } from "@/lib/utils";
+import { cn, money } from "@/lib/utils";
 import { expenseCategories } from "@/lib/constants";
 import type { Budget, Currency } from "@/lib/types";
 
@@ -53,18 +53,26 @@ export default function DashboardPage() {
   });
   const totalBudgetRemaining = budgetRows.reduce((sum, budget) => sum + budget.remaining, 0);
   const overBudgetCount = budgetRows.filter((budget) => budget.over).length;
+  const hasAvailableBalance = stats.walletBalance > 0;
 
   return (
     <div className="grid gap-6">
       <section>
         <Card className="overflow-hidden p-0">
-          <div className="bg-ink p-6 text-white dark:bg-white dark:text-ink">
+          <div
+            className={cn(
+              "p-6 text-white transition-colors duration-500",
+              hasAvailableBalance
+                ? "bg-[linear-gradient(135deg,#0f5f3c_0%,#28a86b_58%,#7ce2a5_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]"
+                : "bg-ink dark:bg-white dark:text-ink"
+            )}
+          >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm opacity-70">Available Balance</p>
+                <p className="text-sm opacity-80">Available Balance</p>
                 <h2 className="mt-3 text-4xl font-black tracking-normal sm:text-5xl">{money(stats.walletBalance, activeCurrency)}</h2>
               </div>
-              <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-white/10 dark:bg-ink/10">
+              <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-white/15 shadow-[0_0_24px_rgba(255,255,255,0.16)] dark:bg-ink/10">
                 <Wallet />
               </span>
             </div>
