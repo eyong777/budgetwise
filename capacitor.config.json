@@ -1,0 +1,9 @@
+{
+  "appId": "com.eyong777.budgetwise",
+  "appName": "BudgetWise",
+  "webDir": "out",
+  "server": {
+    "url": "https://budgetwise-ptb5.vercel.app",
+    "cleartext": false
+  }
+}

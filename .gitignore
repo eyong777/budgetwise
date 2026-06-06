@@ -6,3 +6,6 @@ node_modules
 *.log
 vercel
 .vercel
+android/.gradle
+android/build
+android/app/build
